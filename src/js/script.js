@@ -35,6 +35,7 @@ const som_completo = document.getElementById('som_completo');
 function tocarSom(audio, time) {
     audio.currentTime = time ?? 0;
     audio.volume = 1;
+    audio.play().catch(err => document.querySelector('header p').textContent = err);
     audio.play();
 }
 
