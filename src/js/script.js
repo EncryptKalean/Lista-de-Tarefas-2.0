@@ -32,11 +32,20 @@ const som_fire_end = document.getElementById('som_fire_end');
 const som_progress = document.getElementById('som_progress');
 const som_completo = document.getElementById('som_completo');
 
+const audio = new Audio("src/audios/create.ogg");
+
+document.addEventListener("click", () => {
+    audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+    }).catch(() => { });
+}, { once: true });
+
 function tocarSom(audio, time) {
     audio.currentTime = time ?? 0;
     audio.volume = 1;
     audio.play().catch(err => document.querySelector('header p').textContent = err);
-    audio.play();
+    // audio.play();
 }
 
 // CRIANDO E APAGANDO TAREFAS ------------------------------
