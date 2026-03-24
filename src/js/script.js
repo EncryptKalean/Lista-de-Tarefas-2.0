@@ -50,6 +50,12 @@ function tocarSom(audio, time) {
     // audio.play();
 }
 
+const log = document.getElementById("log");
+
+window.onerror = function (msg, url, line, col, error) {
+    log.textContent += `\nErro: ${msg} (${line}:${col})`;
+};
+
 // CRIANDO E APAGANDO TAREFAS ------------------------------
 // CRIANDO TAREFA ------------------------------
 // CRIANDO TAREFA ------------------------------
