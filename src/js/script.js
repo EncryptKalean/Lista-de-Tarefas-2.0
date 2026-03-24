@@ -1,3 +1,18 @@
+// Serve para ativar a permissão de audio no mobile
+const audio = new Audio("src/audio/click.ogg");
+
+function unlockAudio() {
+    audio.play()
+        .then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            console.log("Áudio desbloqueado");
+        })
+        .catch(() => { });
+}
+
+document.addEventListener("click", unlockAudio, { once: true });
+
 // SISTEMAS BASICOS -------------------------------------------
 
 const lista = document.querySelector('#core ul');
@@ -32,31 +47,11 @@ const som_fire_end = document.getElementById('som_fire_end');
 const som_progress = document.getElementById('som_progress');
 const som_completo = document.getElementById('som_completo');
 
-const audio = new Audio("src/audio/click.ogg");
-
-function unlockAudio() {
-    audio.play()
-        .then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            console.log("Áudio desbloqueado");
-        })
-        .catch(() => { });
-}
-
-document.addEventListener("click", unlockAudio, { once: true });
-
 function tocarSom(audio, time) {
     audio.currentTime = time ?? 0;
     audio.muted = false;
     audio.play();
 }
-
-const log = document.getElementById("log");
-
-window.onerror = function (msg, url, line, col, error) {
-    log.textContent += `\nErro: ${msg} (${line}:${col})`;
-};
 
 // CRIANDO E APAGANDO TAREFAS ------------------------------
 // CRIANDO TAREFA ------------------------------
@@ -91,51 +86,12 @@ function add() {
     });
 }
 
-apagar_tudo_btn.addEventListener('click', () => { apagar_tudo_alerta.classList.add('aberto'); });
-
-apagar_tudo_alerta.addEventListener('click', (click) => {
-    const target = click.target.closest('button');
-
-    if (!target) return;
-
-    const btn = target.id;
-
-    if (btn === "confirmar") reset();
-
-    apagar_tudo_alerta.classList.remove('aberto');
-});
-
-function reset() {
-    tarefas_array.length = 0;
-
-    localStorage.removeItem('tarefas_array');
-
-    tarefas_container.innerHTML = '';
-
-    barra_desprogresso.style.transform = `scaleX(1)`;
-
-    barra_progresso.style.background = ``;
-
-    barra_progresso.classList.remove('completo');
-
-    barra_progresso.classList.remove('idle');
-
-    streackArray = [false, false, false, false];
-
-    span.textContent = 0;
-
-    feitos = 0;
-    todos = 0;
-
-    lista.classList.remove('pronto');
-}
-
 function criandoTarefa(tarefa) {
 
     const criando = ({
         titulo: tarefa,
         feito: false,
-        id: crypto.randomUUID()
+        id: Date.now() + Math.random()
     });
 
     render(criando, true);
@@ -209,7 +165,7 @@ function render(tarefa, novo) {
 };
 
 lista.addEventListener('change', (click) => {
-    if (!click.target.type === 'checkbox') return;
+    if (click.target.type !== 'checkbox') return;
 
     const id = click.target.closest('li').id;
 
@@ -227,6 +183,45 @@ lista.addEventListener('change', (click) => {
         progressoBarra();
     }, 500);
 });
+
+apagar_tudo_btn.addEventListener('click', () => { apagar_tudo_alerta.classList.add('aberto'); });
+
+apagar_tudo_alerta.addEventListener('click', (click) => {
+    const target = click.target.closest('button');
+
+    if (!target) return;
+
+    const btn = target.id;
+
+    if (btn === "confirmar") reset();
+
+    apagar_tudo_alerta.classList.remove('aberto');
+});
+
+function reset() {
+    tarefas_array.length = 0;
+
+    localStorage.removeItem('tarefas_array');
+
+    tarefas_container.innerHTML = '';
+
+    barra_desprogresso.style.transform = `scaleX(1)`;
+
+    barra_progresso.style.background = ``;
+
+    barra_progresso.classList.remove('completo');
+
+    barra_progresso.classList.remove('idle');
+
+    streackArray = [false, false, false, false];
+
+    span.textContent = 0;
+
+    feitos = 0;
+    todos = 0;
+
+    lista.classList.remove('pronto');
+}
 
 // BARRA DE PROGRESSO -----------------------------
 // BARRA DE PROGRESSO -----------------------------

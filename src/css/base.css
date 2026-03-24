@@ -5,10 +5,6 @@
   --neon_primario: #a855f7;
   --neon_secundario: #00cfff;
   --neon_terciario: #00ff9c;
-  --glow_low: 0 0 5px rgba(255, 255, 255, 0.05);
-  --glow_medium: 0 0 5px currentColor, 0 0 10px currentColor;
-  --glow_high:
-    0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
 }
 
 * {
@@ -16,7 +12,6 @@
   margin: 0;
   border: 0;
   box-sizing: border-box;
-  letter-spacing: 1px;
   text-decoration: none;
   font-family: "Inter", sans-serif;
   list-style: none;
@@ -42,21 +37,8 @@ body {
 
 body {
   background:
-    radial-gradient(
-      circle at 20% 10%,
-      rgba(180, 80, 255, 0.25),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 70% 30%,
-      rgba(80, 200, 255, 0.2),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 50% 80%,
-      rgba(120, 255, 150, 0.2),
-      transparent 40%
-    );
+    linear-gradient(120deg, rgba(168, 85, 247, 0.15), transparent 40%),
+    linear-gradient(300deg, rgba(0, 255, 156, 0.1), transparent 40%);
   padding: 2% 5%;
 }
 
@@ -64,6 +46,7 @@ h1,
 h2,
 h3 {
   font-family: "Poppins", sans-serif;
+  letter-spacing: 1px;
 }
 
 .linha {
@@ -72,10 +55,7 @@ h3 {
   margin: 0 auto;
   color: white;
   background-color: var(--neon_secundario);
-  box-shadow:
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 20px currentColor;
+  box-shadow: 0 0 15px currentColor;
   opacity: 0.2;
 }
 
@@ -154,7 +134,7 @@ header p {
 }
 
 input:focus {
-  box-shadow: 0 0 10px var(--neon_secundario);
+  border-color: var(--neon_secundario) !important;
 }
 
 #input_container input.erro {
@@ -184,7 +164,6 @@ input:focus {
   border-radius: 5px;
   font-size: 1.7rem;
   font-weight: bold;
-  box-shadow: var(--glow_low);
 }
 
 /* SEQUENCIA ------------------------------------------ */
@@ -257,15 +236,12 @@ input:focus {
   background-color: white;
   border: 2px solid var(--texto_terciario);
   overflow: hidden;
-  box-shadow:
-    0 0 10px rgba(0, 255, 156, 0.3),
-    0 0 20px rgba(0, 207, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 207, 255, 0.5);
   transition:
     height 1s ease,
     opacity 0.4s ease,
     transform 0.4s ease;
   opacity: 0.6;
-  animation: moveGradient 3s infinite alternate;
   transform-origin: center;
   will-change: transform;
 }
@@ -289,33 +265,19 @@ input:focus {
   height: 100%;
   width: 100%;
   transition: transform 1s ease-in-out;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   transform-origin: right center;
   background: var(--texto_terciario);
-}
-
-@keyframes moveGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
 }
 
 @keyframes progressoIdle {
   0%,
   100% {
     transform: scale(1.02);
-    box-shadow:
-      0 0 10px rgba(0, 255, 156, 0.3),
-      0 0 20px rgba(0, 207, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 207, 255, 0.3);
   }
   50% {
     transform: scale(1.05);
-    box-shadow:
-      0 0 10px rgba(0, 255, 156, 0.4),
-      0 0 20px rgba(0, 207, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 207, 255, 0.7);
   }
 }
 
@@ -326,15 +288,14 @@ input:focus {
   40% {
     transform: scale(1.1);
     box-shadow:
-      0 0 30px rgba(0, 255, 156, 1),
-      0 0 60px rgba(0, 207, 255, 1),
-      0 0 100px rgba(168, 85, 247, 0.9);
+      0 0 15px rgba(0, 255, 156, 1),
+      0 0 25px rgba(0, 207, 255, 1);
   }
   100% {
     transform: scale(1.02);
     box-shadow:
-      0 0 10px rgba(0, 255, 156, 0.6),
-      0 0 20px rgba(0, 207, 255, 0.5);
+      0 0 10px rgba(0, 255, 156, 0.4),
+      0 0 20px rgba(0, 207, 255, 0.4);
   }
 }
 
@@ -349,7 +310,6 @@ input:focus {
   font-weight: bold;
   color: var(--neon_terciario);
   align-content: start;
-  filter: drop-shadow(0 0 6px currentColor);
   transition:
     padding 0.5s,
     margin 1s;
@@ -362,6 +322,7 @@ input:focus {
 
 #msg_motivacional > span {
   position: relative;
+  text-shadow: 0 0 15px currentColor;
 }
 
 #msg_motivacional svg {
@@ -398,7 +359,6 @@ ul {
   display: flex;
   flex-direction: column;
   background-color: rgba(33, 38, 56, 0.5);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 ul.pronto {
@@ -478,7 +438,7 @@ ul .checkbox {
 
 li span,
 ul .checkbox {
-  transition: all 1s ease;
+  transition: opacity 1s;
 }
 
 li input:checked {
@@ -498,9 +458,7 @@ li input:checked ~ span {
 }
 
 li input:checked ~ .checkbox {
-  box-shadow:
-    0 0 6px currentColor,
-    0 0 12px currentColor;
+  box-shadow: 0 0 10px currentColor;
 }
 
 li svg {
@@ -534,18 +492,21 @@ li input:checked ~ .checkbox > svg {
   padding: 5px;
   border-radius: 10px;
   opacity: 0.6;
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.3s,
+    color 0.3s,
+    background-color 0.3s;
   margin-left: auto;
 }
 
 #delete_all:hover {
   opacity: 1;
   color: #ff4d6d;
-  box-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+  background-color: var(--texto_secundario);
 }
 
 #delete_all svg {
-  color: var(--texto_primario);
+  color: inherit;
   height: 100%;
 }
 
@@ -554,8 +515,7 @@ li input:checked ~ .checkbox > svg {
   position: fixed;
   padding: 2%;
   inset: 0;
-  backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   align-content: center;
   transform: scaleY(0);
   transition: transform 0.2s;
@@ -567,7 +527,6 @@ li input:checked ~ .checkbox > svg {
   color: inherit;
   height: 50px;
   margin-bottom: 20px;
-  filter: drop-shadow(0 0 10px rgba(255, 77, 109, 1));
 }
 
 #delete_alerta.aberto {
@@ -604,7 +563,5 @@ li input:checked ~ .checkbox > svg {
   border-color: transparent;
   background: rgba(255, 0, 0, 0.2);
   color: var(--texto_primario);
-  box-shadow:
-    0 0 8px rgba(255, 77, 109, 0.6),
-    0 0 20px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
 }

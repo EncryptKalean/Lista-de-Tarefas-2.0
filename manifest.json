@@ -14,8 +14,8 @@
       "type": "image/png"
     },
     {
-      "src": "src/imagens/APP-5000.png",
-      "sizes": "5000x5000",
+      "src": "src/imagens/APP-500.png",
+      "sizes": "500x500",
       "type": "image/png"
     }
   ]
