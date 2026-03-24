@@ -44,7 +44,9 @@ document.addEventListener("click", () => {
 function tocarSom(audio, time) {
     audio.currentTime = time ?? 0;
     audio.volume = 1;
-    audio.play().catch(err => document.querySelector('header p').textContent = err);
+    audio.play()
+        .then(() => document.querySelector('header p').textContent = "TOCOU")
+        .catch(err => document.querySelector('header p').textContent = "ERRO AUDIO:", err);
     // audio.play();
 }
 
