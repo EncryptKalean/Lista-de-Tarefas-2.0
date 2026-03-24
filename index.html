@@ -77,7 +77,7 @@
 
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#8b5cf6" />
-    <link rel="apple-touch-icon" href="/src/imagens/APP-500.png" />
+    <link rel="apple-touch-icon" href="src/imagens/APP-500.png" />
   </head>
   <body>
     <header>
@@ -87,7 +87,7 @@
         <span>Repita.</span>
       </h1>
 
-      <p>Transforme tarefa em pequenas vitórias diárias.</p>
+      <p>Transformeee tarefa em pequenas vitórias diárias.</p>
 
       <span class="linha" aria-hidden="true"></span>
     </header>
@@ -248,8 +248,11 @@
       </symbol>
     </svg>
 
-    <audio id="som_criando_tarefa" src="src/audios/create.ogg"></audio>
-    <audio id="som_check" src="src/audios/check.ogg"></audio>
+    <audio id="som_criando_tarefa">
+      <source src="src/audios/create.ogg" type="audio/ogg" />
+      <source src="src/audios/create.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="som_check" src="src/audios/check.ogg" type="audio/ogg"></audio>
     <audio id="som_fire_start" src="src/audios/fire_start.ogg"></audio>
     <audio id="som_fire_end" src="src/audios/fire_end.ogg"></audio>
     <audio id="som_progress" src="src/audios/progress_bar.ogg"></audio>
