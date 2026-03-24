@@ -1,4 +1,4 @@
-const CACHE_NAME = "Lista-Tarefas-v1.1.2";
+const CACHE_NAME = "Lista-Tarefas-v1.2";
 
 const urlsToCache = [
   "./",
@@ -7,8 +7,7 @@ const urlsToCache = [
   "./src/js/script.js",
   "./manifest.json",
   "./src/imagens/APP-192.png",
-  "./src/imagens/APP-500.png",
-  "./src/audios/create.ogg"
+  "./src/imagens/APP-500.png"
 ];
 
 // INSTALL

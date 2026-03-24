@@ -32,22 +32,24 @@ const som_fire_end = document.getElementById('som_fire_end');
 const som_progress = document.getElementById('som_progress');
 const som_completo = document.getElementById('som_completo');
 
-const audio = new Audio("src/audios/create.ogg");
+const audio = new Audio("src/audio/click.ogg");
 
-document.addEventListener("click", () => {
-    audio.play().then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-    }).catch(() => { });
-}, { once: true });
+function unlockAudio() {
+    audio.play()
+        .then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            console.log("Áudio desbloqueado");
+        })
+        .catch(() => { });
+}
+
+document.addEventListener("click", unlockAudio, { once: true });
 
 function tocarSom(audio, time) {
     audio.currentTime = time ?? 0;
-    audio.volume = 1;
-    audio.play()
-        .then(() => document.querySelector('header p').textContent = "TOCOU")
-        .catch(err => document.querySelector('header p').textContent = "ERRO AUDIO:", err);
-    // audio.play();
+    audio.muted = false;
+    audio.play();
 }
 
 const log = document.getElementById("log");
