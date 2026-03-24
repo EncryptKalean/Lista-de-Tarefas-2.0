@@ -1,0 +1,22 @@
+{
+  "name": "Lista de Tarefas 2.0 App",
+  "short_name": "Lista de Tarefas 2.0",
+  "start_url": "./",
+  "scope": "./",
+  "description": "Uma lista de tarefas com foco em dopamina",
+  "display": "standalone",
+  "background_color": "#141822",
+  "theme_color": "#8b5cf6",
+  "icons": [
+    {
+      "src": "src/imagens/APP-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "src/imagens/APP-5000.png",
+      "sizes": "5000x5000",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <!-- Charset deve vir antes de tudo -->
+    <meta charset="UTF-8" />
+
+    <!-- Viewport para responsividade logo em seguida -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO básico -->
+    <meta name="author" content="Kauan Leandro" />
+    <meta name="description" content="Descrição do Serviço" />
+    <meta name="robots" content="index, follow" />
+    <link rel="me" href="https://github.com/EncryptKalean" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="src/img/favicon.ico" type="image/x-icon" />
+    <link
+      rel="icon"
+      href="src/img/favicon-32x32.png"
+      sizes="32x32"
+      type="image/png"
+    />
+
+    <!-- Canonical deve vir logo após SEO (Link do site) -->
+    <link
+      rel="canonical"
+      href="https://encryptkalean.github.io/Link-Do-Projeto/"
+    />
+
+    <!-- Open Graph (Facebook, LinkedIn etc.) -->
+    <meta property="og:site_name" content="Nome do site" />
+    <meta property="og:title" content="Titulo do site" />
+    <meta property="og:description" content="Descrição rapida do serviço" />
+    <meta
+      property="og:image"
+      content="https://encryptkalean.github.io/Link-Do-Projeto/src/img/preview.jpg"
+    />
+    <meta
+      property="og:url"
+      content="https://encryptkalean.github.io/Link-Do-Projeto/"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Titulo do site" />
+    <meta name="twitter:description" content="Descrição rapida do serviço" />
+    <meta
+      name="twitter:image"
+      content="https://encryptkalean.github.io/Link-Do-Projeto/src/img/preview.jpg"
+    />
+    <meta
+      name="twitter:url"
+      content="https://encryptkalean.github.io/Link-Do-Projeto/"
+    />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="#000000" />
+
+    <title>Projeto</title>
+
+    <!-- Usado quando o background é formado por um background-image -->
+    <!-- <link rel="preload" as="image" href="src/img/background.webp" fetchpriority="high" /> -->
+
+    <link rel="stylesheet" href="src/css/base.css" />
+    <!-- <link rel="stylesheet" href="src/css/footer.css" />
+  <link rel="stylesheet" href="src/css/responsivo.css" /> -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#8b5cf6" />
+    <link rel="apple-touch-icon" href="/src/imagens/APP-500.png" />
+  </head>
+  <body>
+    <header>
+      <h1>
+        <span>Complete.</span>
+        <span>Sinta.</span>
+        <span>Repita.</span>
+      </h1>
+
+      <p>Transforme tarefa em pequenas vitórias diárias.</p>
+
+      <span class="linha" aria-hidden="true"></span>
+    </header>
+
+    <main>
+      <section id="core">
+        <div class="center">
+          <div id="input_container">
+            <input type="text" placeholder="Digite sua tarefa..." />
+            <button>Adicionar</button>
+          </div>
+
+          <div class="" id="sequencia">
+            <h2>
+              <svg><use href="#icon_fogo" /></svg>
+              <span>0</span>tarefas concluidas
+            </h2>
+          </div>
+
+          <div id="barra_progresso">
+            <div id="barra_desprogresso"></div>
+          </div>
+
+          <span class="linha"></span>
+
+          <ul>
+            <div class="" id="msg_motivacional">
+              <span
+                >BOA!!
+                <svg><use href="#icon_foguete" /></svg>
+              </span>
+            </div>
+
+            <span id="separacao_mensagem_motivacional" class="linha"> </span>
+
+            <div id="tarefas_container">
+              <!-- <li class="recem_criado">
+                <input type="checkbox" id="" />
+                <div class="checkbox">
+                  <svg>
+                    <use href="#icon_correct" />
+                  </svg>
+                </div>
+                <span>TAREFA 1</span>
+              </li> -->
+            </div>
+          </ul>
+
+          <button id="delete_all">
+            <svg><use href="#icon_lixo" /></svg>
+          </button>
+
+          <div class="" id="delete_alerta">
+            <svg><use href="#icon_lixo" /></svg>
+            <h2>Você realmente quer apagar todas as tarefas?</h2>
+            <h3>Essa ação não pode ser desfeita</h3>
+
+            <div>
+              <button id="cancelar">Cancelar</button>
+              <button id="confirmar">Confirmar</button>
+            </div>
+          </div>
+        </div>
+        <!-- CENTER -->
+      </section>
+      <!-- CORE -->
+    </main>
+
+    <svg style="display: none">
+      <symbol
+        id="icon_correct"
+        fill="currentColor"
+        viewBox="0 0 335.765 335.765"
+        xml:space="preserve"
+      >
+        <g>
+          <g>
+            <polygon
+              points="311.757,41.803 107.573,245.96 23.986,162.364 0,186.393 107.573,293.962 335.765,65.795   "
+            />
+          </g>
+        </g>
+      </symbol>
+      <symbol id="icon_fogo" fill="currentColor" viewBox="-33 0 255 255">
+        <defs>
+          <style>
+            .cls-3 {
+              fill: red;
+            }
+
+            .cls-4 {
+              fill: #f7630c;
+            }
+
+            .cls-5 {
+              fill: #fce100;
+            }
+          </style>
+        </defs>
+        <g id="fire">
+          <path
+            d="M187.899,164.809 C185.803,214.868 144.574,254.812 94.000,254.812 C42.085,254.812 -0.000,211.312 -0.000,160.812 C-0.000,154.062 -0.121,140.572 10.000,117.812 C16.057,104.191 19.856,95.634 22.000,87.812 C23.178,83.513 25.469,76.683 32.000,87.812 C35.851,94.374 36.000,103.812 36.000,103.812 C36.000,103.812 50.328,92.817 60.000,71.812 C74.179,41.019 62.866,22.612 59.000,9.812 C57.662,5.384 56.822,-2.574 66.000,0.812 C75.352,4.263 100.076,21.570 113.000,39.812 C131.445,65.847 138.000,90.812 138.000,90.812 C138.000,90.812 143.906,83.482 146.000,75.812 C148.365,67.151 148.400,58.573 155.999,67.813 C163.226,76.600 173.959,93.113 180.000,108.812 C190.969,137.321 187.899,164.809 187.899,164.809 Z"
+            id="path-1"
+            class="cls-3"
+            fill-rule="evenodd"
+          />
+          <path
+            d="M94.000,254.812 C58.101,254.812 29.000,225.711 29.000,189.812 C29.000,168.151 37.729,155.000 55.896,137.166 C67.528,125.747 78.415,111.722 83.042,102.172 C83.953,100.292 86.026,90.495 94.019,101.966 C98.212,107.982 104.785,118.681 109.000,127.812 C116.266,143.555 118.000,158.812 118.000,158.812 C118.000,158.812 125.121,154.616 130.000,143.812 C131.573,140.330 134.753,127.148 143.643,140.328 C150.166,150.000 159.127,167.390 159.000,189.812 C159.000,225.711 129.898,254.812 94.000,254.812 Z"
+            id="path-2"
+            class="cls-4"
+            fill-rule="evenodd"
+          />
+          <path
+            d="M95.000,183.812 C104.250,183.812 104.250,200.941 116.000,223.812 C123.824,239.041 112.121,254.812 95.000,254.812 C77.879,254.812 69.000,240.933 69.000,223.812 C69.000,206.692 85.750,183.812 95.000,183.812 Z"
+            id="path-3"
+            class="cls-5"
+            fill-rule="evenodd"
+          />
+        </g>
+      </symbol>
+      <symbol id="icon_foguete" viewBox="0 0 36 36">
+        <path
+          fill="#A0041E"
+          d="M1 17l8-7l16 1l1 16l-7 8s.001-5.999-6-12s-12-6-12-6z"
+        ></path>
+        <path
+          fill="#FFAC33"
+          d="M.973 35s-.036-7.979 2.985-11S15 21.187 15 21.187S14.999 29 11.999 32c-3 3-11.026 3-11.026 3z"
+        ></path>
+        <circle fill="#FFCC4D" cx="8.999" cy="27" r="4"></circle>
+        <path
+          fill="#55ACEE"
+          d="M35.999 0s-10 0-22 10c-6 5-6 14-4 16s11 2 16-4c10-12 10-22 10-22z"
+        ></path>
+        <path
+          d="M26.999 5a3.996 3.996 0 0 0-3.641 2.36A3.969 3.969 0 0 1 24.999 7a4 4 0 0 1 4 4c0 .586-.133 1.139-.359 1.64A3.993 3.993 0 0 0 30.999 9a4 4 0 0 0-4-4z"
+          fill="#000000"
+        ></path>
+        <path
+          fill="#A0041E"
+          d="M8 28s0-4 1-5s13.001-10.999 14-10s-9.001 13-10.001 14S8 28 8 28z"
+        ></path>
+      </symbol>
+      <symbol
+        id="icon_lixo"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M10 11v6" />
+        <path d="M14 11v6" />
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+        <path d="M3 6h18" />
+        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      </symbol>
+    </svg>
+
+    <audio id="som_criando_tarefa" src="/src/audios/create.ogg"></audio>
+    <audio id="som_check" src="/src/audios/check.ogg"></audio>
+    <audio id="som_fire_start" src="/src/audios/fire_start.ogg"></audio>
+    <audio id="som_fire_end" src="/src/audios/fire_end.ogg"></audio>
+    <audio id="som_progress" src="/src/audios/progress_bar.ogg"></audio>
+    <audio id="som_completo" src="/src/audios/grand_finale.ogg"></audio>
+
+    <script src="src/js/script.js"></script>
+  </body>
+</html>
