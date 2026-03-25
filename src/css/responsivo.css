@@ -1,0 +1,40 @@
+/* @media (width < 75rem) {
+  body {
+    border: 2px solid green;
+  }
+}
+
+@media (width < 56.25rem) {
+  body {
+    border: 2px solid blue;
+  }
+}
+
+@media (width < 37.5rem) {
+  body {
+    border: 2px solid red;
+  }
+} */
+
+@media (width < 25rem) {
+  /* body {
+    border: 2px solid white;
+  } */
+
+  header h1 {
+    font-size: 2.5rem;
+  }
+
+  .center {
+    gap: 7px;
+  }
+
+  #input_container button {
+    padding: 10px 15px;
+    font-size: 1.5rem;
+  }
+
+  #barra_progresso {
+    margin: 10px 0;
+  }
+}

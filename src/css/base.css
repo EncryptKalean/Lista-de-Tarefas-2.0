@@ -176,7 +176,7 @@ input:focus {
   width: 90vw;
   justify-items: center;
   z-index: 1;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.3);
   border-radius: 20px;
   padding: 10px;
   transform: scale(0);
@@ -497,6 +497,10 @@ li input:checked ~ .checkbox > svg {
     color 0.3s,
     background-color 0.3s;
   margin-left: auto;
+}
+
+#delete_all.escondido {
+  display: none;
 }
 
 #delete_all:hover {

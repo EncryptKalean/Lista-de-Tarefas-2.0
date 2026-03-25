@@ -1,20 +1,24 @@
-const CACHE_NAME = "Lista-Tarefas-v1.2.5";
+const CACHE_NAME = "lista-tarefas-v1";
 
-const urlsToCache = [
+// arquivos essenciais (app shell)
+const STATIC_ASSETS = [
   "./",
   "./index.html",
   "./src/css/base.css",
+  "./src/css/responsivo.css",
   "./src/js/script.js",
   "./manifest.json",
-  "./src/imagens/APP-192.png",
-  "./src/imagens/APP-500.png"
+  // 🔊 sons essenciais
+  "./src/audio/create.ogg",
+  "./src/audio/check.ogg",
+  "./src/audio/grand_finale.ogg"
 ];
 
-// INSTALL
+// INSTALL → garante offline base
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   );
 });
 
@@ -23,33 +27,28 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(key => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
-        }
-      }))
+      Promise.all(keys.map(key => key !== CACHE_NAME && caches.delete(key)))
     )
   );
 });
 
-// FETCH (network first com fallback seguro)
+// FETCH (inteligente)
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        if (!response || response.status !== 200) {
-          return response;
-        }
-
         const clone = response.clone();
+
         caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, clone);
         });
 
         return response;
       })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+      .catch(() => caches.match(event.request))
   );
 });
+
+/*
+  OBS: Eu não configurei essa parte do SW.js sozinho, usei bastante IA e pesquisas na internet
+*/

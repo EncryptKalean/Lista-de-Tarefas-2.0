@@ -1,4 +1,4 @@
-// Serve para ativar a permissão de audio no mobile
+// Ativador da permissão de audio no mobile
 const audio = new Audio("src/audio/click.ogg");
 
 function unlockAudio() {
@@ -13,6 +13,8 @@ function unlockAudio() {
 
 document.addEventListener("click", unlockAudio, { once: true });
 
+// SISTEMAS BASICOS -------------------------------------------
+// SISTEMAS BASICOS -------------------------------------------
 // SISTEMAS BASICOS -------------------------------------------
 
 const lista = document.querySelector('#core ul');
@@ -33,7 +35,26 @@ let todos = tarefas_array.length;
 let feitos = 0;
 let porcentagem;
 
-if (tarefas_array.length > 0) render(tarefas_array);
+
+navigator.serviceWorker.register("sw.js").then(reg => {
+    // força verificar update
+    setInterval(() => {
+        reg.update();
+    }, 30000);
+
+    reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+
+        newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed") {
+                if (navigator.serviceWorker.controller) {
+                    console.log("Nova versão!");
+                    window.location.reload();
+                }
+            }
+        });
+    });
+});
 
 
 // AUDIOS ------------------------------
@@ -104,6 +125,8 @@ function criandoTarefa(tarefa) {
 
     tocarSom(som_criando_tarefa);
     todos++;
+
+    progressoBarra(true);
 };
 
 function render(tarefa, novo) {
@@ -119,6 +142,7 @@ function render(tarefa, novo) {
             ren(el);
 
             if (feitos_verificacao.length) {
+                console.log('a')
                 setTimer('timeoutRender', () => {
                     progressoBarra(true);
                 }, 1000);
@@ -161,6 +185,8 @@ function render(tarefa, novo) {
         console.log('pronto');
         lista.classList.add('pronto');
     };
+
+    if (apagar_tudo_btn.classList.contains('escondido')) apagar_tudo_btn.classList.remove('escondido');
 
 };
 
@@ -221,6 +247,8 @@ function reset() {
     todos = 0;
 
     lista.classList.remove('pronto');
+
+    apagar_tudo_btn.classList.add('escondido');
 }
 
 // BARRA DE PROGRESSO -----------------------------
@@ -237,11 +265,13 @@ async function progressoBarra(renderizando) {
 
     let background = ``;
 
-    barra_progresso.classList.add('ativo');
+    if (!renderizando) {
+        barra_progresso.classList.add('ativo');
+
+        tocarSom(som_progress, 0.4);
+    };
 
     barra_desprogresso.style.transform = `scaleX(${(100 - porcentagem) / 100})`;
-
-    tocarSom(som_progress, 0.4);
 
     for (let i = 0; i < cores_progresso.length; i++) {
         if (porcentagem > 95 && i == cores_progresso.length - 1) {
@@ -263,13 +293,15 @@ async function progressoBarra(renderizando) {
 
     barra_progresso.style.background = `linear-gradient(90deg, ${background})`;
 
-    setTimer('timeoutProgresso', () => {
-        barra_progresso.classList.remove('ativo');
-    }, 5000);
+    if (!renderizando) {
+        setTimer('timeoutProgresso', () => {
+            barra_progresso.classList.remove('ativo');
+        }, 5000);
 
-    if (!renderizando) setTimer('msgMotivacional', () => {
-        mensagemMotivacional(todos, feitos);
-    }, 1000);
+        setTimer('msgMotivacional', () => {
+            mensagemMotivacional(todos, feitos);
+        }, 1000)
+    };
 };
 
 // MENSAGEM MOTIVACIONAL ----------------------------
@@ -352,6 +384,9 @@ async function streakVerificacao() {
         }, 3000);
     };
 };
+
+// Inicio automatico
+if (tarefas_array.length > 0) render(tarefas_array);
 
 // SISTEMA DE NIVEIS NAS MENSAGENS MOTIVACIONAIS
 // VARIAÇÃO DE SONS
