@@ -8,17 +8,11 @@
   body {
     border: 2px solid blue;
   }
-}
-
-@media (width < 37.5rem) {
-  body {
-    border: 2px solid red;
-  }
 } */
 
-@media (width < 25rem) {
+@media (width < 37.5rem) {
   /* body {
-    border: 2px solid white;
+    border: 2px solid red;
   } */
 
   header h1 {
