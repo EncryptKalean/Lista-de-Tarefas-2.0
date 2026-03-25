@@ -351,7 +351,7 @@ input:focus {
 /* LISTA -------------------------------------------------------- */
 /* LISTA -------------------------------------------------------- */
 
-ul {
+#tarefas_container {
   width: 100%;
   overflow-y: auto;
   max-height: 53dvh;
@@ -361,25 +361,25 @@ ul {
   background-color: rgba(33, 38, 56, 0.5);
 }
 
-ul.pronto {
+#tarefas_container.pronto {
   border: 1px solid var(--texto_terciario);
 }
 
 /* --------- scrollbar */
 
-ul::-webkit-scrollbar {
+#tarefas_container::-webkit-scrollbar {
   width: 3px;
 }
 
-ul::-webkit-scrollbar-track {
+#tarefas_container::-webkit-scrollbar-track {
   background: transparent;
 }
 
-ul::-webkit-scrollbar-thumb {
+#tarefas_container::-webkit-scrollbar-thumb {
   background: var(--texto_terciario);
 }
 
-ul::-webkit-scrollbar-thumb:hover {
+#tarefas_container::-webkit-scrollbar-thumb:hover {
   background: var(--neon_primario);
 }
 
@@ -427,7 +427,7 @@ li > input {
   cursor: pointer;
 }
 
-ul .checkbox {
+#tarefas_container .checkbox {
   width: 25px;
   aspect-ratio: 1;
   border: 2px solid var(--texto_terciario);
@@ -437,7 +437,7 @@ ul .checkbox {
 }
 
 li span,
-ul .checkbox {
+#tarefas_container .checkbox {
   transition: opacity 1s;
 }
 

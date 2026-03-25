@@ -17,8 +17,8 @@ document.addEventListener("click", unlockAudio, { once: true });
 // SISTEMAS BASICOS -------------------------------------------
 // SISTEMAS BASICOS -------------------------------------------
 
-const lista = document.querySelector('#core ul');
-const tarefas_container = lista.querySelector('#tarefas_container');
+const lista = document.getElementById('tarefas_container');
+const tarefas_container = lista.querySelector('ul');
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); };
 
