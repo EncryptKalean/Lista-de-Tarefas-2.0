@@ -1,5 +1,5 @@
 // Ativador da permissão de audio no mobile
-const audio = new Audio("src/audio/click.ogg");
+const audio = new Audio("src/audios/check.ogg");
 
 function unlockAudio() {
     audio.play()
@@ -31,6 +31,8 @@ function setTimer(nome, fn, tempo) {
 
 const tarefas_array = (JSON.parse(localStorage.getItem('tarefas_array')) ?? []);
 
+let historico_feitos = +localStorage.getItem('historico_feitos');
+
 let todos = tarefas_array.length;
 let feitos = 0;
 let porcentagem;
@@ -61,28 +63,61 @@ navigator.serviceWorker.register("sw.js").then(reg => {
 // AUDIOS ------------------------------
 // AUDIOS ------------------------------
 
-const som_criando_tarefa = document.getElementById('som_criando_tarefa');
-const som_check = document.getElementById('som_check');
-const som_fire_start = document.getElementById('som_fire_start');
-const som_fire_end = document.getElementById('som_fire_end');
-const som_progress = document.getElementById('som_progress');
-const som_completo = document.getElementById('som_completo');
+const sons = {
+    lapis: {
+        som: document.getElementById('som_criando_tarefa'),
+        volume: 0.5,
+    },
+    check: {
+        som: document.getElementById('som_check'),
+        volume: 0.5,
+    },
+    fire_start: {
+        som: document.getElementById('som_fire_start'),
+        volume: 1,
+    },
+    fire_end: {
+        som: document.getElementById('som_fire_end'),
+        volume: 1,
+    },
+    progress: {
+        som: document.getElementById('som_progress'),
+        volume: 1,
+    },
+    completo: {
+        som: document.getElementById('som_completo'),
+        volume: 1,
+    },
+    confete: {
+        som: document.getElementById('som_confete'),
+        volume: 1,
+    },
+}
 
-function tocarSom(audio, time) {
+function tocarSom(src, time) {
+    const audio = src.som;
+
+    audio.volume = src.volume;
     audio.currentTime = time ?? 0;
-    audio.muted = false;
     audio.play();
 }
 
 // CRIANDO E APAGANDO TAREFAS ------------------------------
-// CRIANDO TAREFA ------------------------------
-// CRIANDO TAREFA ------------------------------
+// CRIANDO E APAGANDO TAREFAS ------------------------------
+// CRIANDO E APAGANDO TAREFAS ------------------------------
 
 const input_container = document.getElementById('input_container');
 const campo_digitacao = input_container.querySelector('input');
 const adicionar_btn = input_container.querySelector('button');
 const apagar_tudo_btn = document.getElementById('delete_all');
 const apagar_tudo_alerta = document.getElementById('delete_alerta');
+const footer = document.querySelector('footer');
+const footer_span = footer.querySelector('span');
+
+if (historico_feitos > 0) {
+    if (footer.classList.contains('nada')) footer.classList.remove('nada');
+    footer_span.textContent = historico_feitos;
+}
 
 adicionar_btn.addEventListener('click', () => { add() });
 campo_digitacao.addEventListener('keyup', (event) => { if (event.key === 'Enter') add(); });
@@ -123,7 +158,7 @@ function criandoTarefa(tarefa) {
         localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
     }, 500);
 
-    tocarSom(som_criando_tarefa);
+    tocarSom(sons.lapis);
     todos++;
 
     progressoBarra(true);
@@ -142,7 +177,6 @@ function render(tarefa, novo) {
             ren(el);
 
             if (feitos_verificacao.length) {
-                console.log('a')
                 setTimer('timeoutRender', () => {
                     progressoBarra(true);
                 }, 1000);
@@ -187,7 +221,6 @@ function render(tarefa, novo) {
     };
 
     if (apagar_tudo_btn.classList.contains('escondido')) apagar_tudo_btn.classList.remove('escondido');
-
 };
 
 lista.addEventListener('change', (click) => {
@@ -197,16 +230,18 @@ lista.addEventListener('change', (click) => {
 
     tarefas_array.find(el => el.id == id).feito = true;
 
-    // setTimer('progressoBarra', () => {
-    // }, 300)
-
-    tocarSom(som_check);
+    tocarSom(sons.check);
 
     feitos++
+    historico_feitos++
+
+    if (footer.classList.contains('nada')) footer.classList.remove('nada');
+    footer_span.textContent = historico_feitos;
 
     setTimer('save', () => {
         localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
         progressoBarra();
+        localStorage.setItem('historico_feitos', historico_feitos);
     }, 500);
 });
 
@@ -268,7 +303,7 @@ async function progressoBarra(renderizando) {
     if (!renderizando) {
         barra_progresso.classList.add('ativo');
 
-        tocarSom(som_progress, 0.4);
+        tocarSom(sons.progress, 0.4);
     };
 
     barra_desprogresso.style.transform = `scaleX(${(100 - porcentagem) / 100})`;
@@ -276,7 +311,15 @@ async function progressoBarra(renderizando) {
     for (let i = 0; i < cores_progresso.length; i++) {
         if (porcentagem > 95 && i == cores_progresso.length - 1) {
 
-            if (!renderizando) tocarSom(som_completo);
+            if (!renderizando) {
+                boom();
+                setTimeout(boom, 300);
+                setTimeout(boom, 600);
+
+                setTimeout(() => {
+                    tocarSom(sons.completo)
+                }, 500)
+            };
 
             await delay(1000);
 
@@ -368,7 +411,7 @@ async function streakVerificacao() {
     };
 
     if (play) {
-        tocarSom(som_fire_start);
+        tocarSom(sons.fire_start);
 
         streak.classList.add('streak');
 
@@ -378,7 +421,7 @@ async function streakVerificacao() {
         streak.querySelector('span').classList.add('pop');
 
         setTimer('timeoutStreak', () => {
-            tocarSom(som_fire_end);
+            tocarSom(sons.fire_end);
             streak.classList.remove('streak');
             streak.querySelector('span').classList.remove('pop');
         }, 3000);
@@ -387,6 +430,95 @@ async function streakVerificacao() {
 
 // Inicio automatico
 if (tarefas_array.length > 0) render(tarefas_array);
+
+
+// CONFETTI -----------------------------
+// CONFETTI -----------------------------
+// CONFETTI -----------------------------
+
+// OBS: Não fui eu que fiz essa parte do codigo.
+
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+let W, H;
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+const COLORS = ["#f00", "#0f0", "#00f", "#ff0", "#0ff", "#f0f"];
+
+const CONFETTI_COUNT = 40; // 🔥 leve + bonito
+
+let confetti = [];
+
+function createConfetti() {
+    const angle = Math.random() * Math.PI - Math.PI; // cone pra cima
+    const force = Math.random() * 10 + 8;
+
+    return {
+        x: W / 2,
+        y: H,
+
+        size: Math.random() * 6 + 2,
+
+        speedX: Math.cos(angle) * force,
+        speedY: Math.sin(angle) * force,
+
+        gravity: 0.15,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rotation: Math.random() * 360
+    };
+}
+
+function boom() {
+    for (let i = 0; i < CONFETTI_COUNT; i++) {
+        confetti.push(createConfetti());
+    }
+    tocarSom(sons.confete);
+}
+
+function update() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (let i = 0; i < confetti.length; i++) {
+        let c = confetti[i];
+
+        // física
+        c.speedY += c.gravity;
+        c.speedX *= 0.99; // resistência do ar
+        c.speedY *= 0.99;
+
+        c.y += c.speedY;
+        c.x += c.speedX;
+
+        // leve efeito visual
+        c.size *= 0.995;
+
+        // desenha
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.rotation * Math.PI / 180);
+
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
+
+        ctx.restore();
+
+        // remove quando sai da tela (ESSENCIAL)
+        if (c.y > H + 20) {
+            confetti.splice(i, 1);
+            i--;
+        }
+    }
+
+    setTimeout(() => requestAnimationFrame(update), 30);
+}
+
+update();
 
 // SISTEMA DE NIVEIS NAS MENSAGENS MOTIVACIONAIS
 // VARIAÇÃO DE SONS

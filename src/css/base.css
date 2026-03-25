@@ -569,3 +569,43 @@ li input:checked ~ .checkbox > svg {
   color: var(--texto_primario);
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
 }
+
+/* FOOTER -------------------------------------------------------- */
+/* FOOTER -------------------------------------------------------- */
+/* FOOTER -------------------------------------------------------- */
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  justify-items: center;
+  opacity: 0.8;
+  transition: opacity 0.5s;
+}
+
+footer.nada {
+  opacity: 0;
+}
+
+footer h1 {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+footer svg {
+  height: 30px;
+}
+
+/* CANVAS -------------------------------------------------------- */
+/* CANVAS -------------------------------------------------------- */
+/* CANVAS -------------------------------------------------------- */
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
