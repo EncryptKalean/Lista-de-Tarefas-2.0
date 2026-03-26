@@ -15,20 +15,28 @@
     border: 2px solid red;
   } */
 
+  header {
+    gap: 15px;
+  }
+
   header h1 {
-    font-size: 2.5rem;
+    font-size: 1.3rem;
+    padding: 5px;
   }
 
   .center {
     gap: 7px;
   }
 
-  #input_container button {
-    padding: 10px 15px;
-    font-size: 1.5rem;
+  #input_container input {
+    font-size: 1rem;
   }
 
-  #barra_progresso {
-    margin: 10px 0;
+  #input_container button {
+    padding: 5px 10px;
   }
+
+  /* #barra_progresso {
+    margin: 10px 0;
+  } */
 }

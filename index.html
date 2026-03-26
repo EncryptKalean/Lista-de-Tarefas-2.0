@@ -74,7 +74,7 @@
 
     <!-- Fontes -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
 
@@ -115,13 +115,13 @@
         <div class="center">
           <div id="input_container">
             <input type="text" placeholder="Digite sua tarefa..." />
-            <button>Adicionar</button>
+            <button>ADICIONAR</button>
           </div>
 
           <div class="" id="sequencia">
             <h2>
               <svg><use href="#icon_fogo" /></svg>
-              <span>0</span>tarefas concluidas
+              Sequencia x<span>0</span>
             </h2>
           </div>
 
@@ -142,7 +142,7 @@
             <span id="separacao_mensagem_motivacional" class="linha"> </span>
 
             <ul>
-              <!-- <li class="recem_criado">
+              <!-- <li class="">
                 <input type="checkbox" id="" />
                 <div class="checkbox">
                   <svg>
@@ -150,6 +150,11 @@
                   </svg>
                 </div>
                 <span>TAREFA 1</span>
+                <div class="coin">
+                  <svg>
+                    <use href="#icon_coin" />
+                  </svg>
+                </div>
               </li> -->
             </ul>
           </div>
@@ -184,19 +189,34 @@
     <canvas id="confetti"></canvas>
 
     <svg style="display: none">
+      <symbol id="icon_correct" fill="currentColor" viewBox="0 0 16 16">
+        <rect x="2" y="8" width="3" height="3" fill="currentColor" />
+        <rect x="4" y="10" width="3" height="3" fill="currentColor" />
+        <rect x="6" y="12" width="3" height="3" fill="currentColor" />
+        <rect x="8" y="10" width="3" height="3" fill="currentColor" />
+        <rect x="10" y="8" width="3" height="3" fill="currentColor" />
+        <rect x="12" y="6" width="3" height="3" fill="currentColor" />
+      </symbol>
       <symbol
-        id="icon_correct"
+        id="icon_coin"
         fill="currentColor"
-        viewBox="0 0 335.765 335.765"
-        xml:space="preserve"
+        viewBox="6 6 20 20"
+        shape-rendering="crispEdges"
       >
-        <g>
-          <g>
-            <polygon
-              points="311.757,41.803 107.573,245.96 23.986,162.364 0,186.393 107.573,293.962 335.765,65.795   "
-            />
-          </g>
-        </g>
+        <!-- moeda oval pixel -->
+        <rect x="10" y="6" width="12" height="2" fill="currentColor" />
+        <rect x="8" y="8" width="16" height="2" fill="currentColor" />
+        <rect x="6" y="10" width="20" height="12" fill="currentColor" />
+        <rect x="8" y="22" width="16" height="2" fill="currentColor" />
+        <rect x="10" y="24" width="12" height="2" fill="currentColor" />
+
+        <rect x="12" y="10" width="8" height="2" fill="#FF8C00" />
+        <rect x="10" y="12" width="2" height="4" fill="#FF8C00" />
+        <rect x="12" y="16" width="8" height="2" fill="#FF8C00" />
+        <rect x="20" y="18" width="2" height="4" fill="#FF8C00" />
+        <rect x="12" y="22" width="8" height="2" fill="#FF8C00" />
+
+        <rect x="15" y="8" width="2" height="14" fill="#FF8C00" />
       </symbol>
       <symbol id="icon_fogo" fill="currentColor" viewBox="-33 0 255 255">
         <defs>
@@ -276,8 +296,8 @@
     </svg>
 
     <!-- SONS -->
-    <audio id="som_criando_tarefa" src="src/audios/create.ogg"></audio>
-    <audio id="som_check" src="src/audios/check.ogg"></audio>
+    <audio id="som_criando_tarefa" src="src/audios/create_8bit.ogg"></audio>
+    <audio id="som_check" src="src/audios/check_8bit.ogg"></audio>
     <audio id="som_fire_start" src="src/audios/fire_start.ogg"></audio>
     <audio id="som_fire_end" src="src/audios/fire_end.ogg"></audio>
     <audio id="som_progress" src="src/audios/progress_bar.ogg"></audio>

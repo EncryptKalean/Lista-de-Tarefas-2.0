@@ -74,11 +74,11 @@ const sons = {
     },
     fire_start: {
         som: document.getElementById('som_fire_start'),
-        volume: 1,
+        volume: 0.7,
     },
     fire_end: {
         som: document.getElementById('som_fire_end'),
-        volume: 1,
+        volume: 0.7
     },
     progress: {
         som: document.getElementById('som_progress'),
@@ -204,9 +204,14 @@ function render(tarefa, novo) {
         const span = document.createElement('span');
         span.textContent = el.titulo;
 
+        const coin_div = document.createElement('div');
+        coin_div.classList.add('coin');
+        coin_div.innerHTML = '<svg><use href="#icon_coin" /></svg>';
+
         li.append(checkbox_input);
         li.append(checkbox_div);
         li.append(span);
+        li.append(coin_div);
 
         fragment.append(li);
     }
@@ -240,8 +245,8 @@ lista.addEventListener('change', (click) => {
 
     setTimer('save', () => {
         localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
-        progressoBarra();
         localStorage.setItem('historico_feitos', historico_feitos);
+        progressoBarra();
     }, 500);
 });
 
@@ -293,7 +298,7 @@ function reset() {
 const barra_progresso = document.getElementById('barra_progresso');
 const barra_desprogresso = barra_progresso.querySelector('#barra_desprogresso');
 
-const cores_progresso = ["#ff4d6d", "#ff9f1c", "#ffe66d", "#00cfff", "#00ff9c"]
+const cores_progresso = ["#ff3b3b", "#ff7a00", "#ffe600", "#00ff9f", "#00e0ff"]
 
 async function progressoBarra(renderizando) {
     porcentagem = (feitos / todos) * 100;
@@ -337,13 +342,13 @@ async function progressoBarra(renderizando) {
     barra_progresso.style.background = `linear-gradient(90deg, ${background})`;
 
     if (!renderizando) {
-        setTimer('timeoutProgresso', () => {
-            barra_progresso.classList.remove('ativo');
-        }, 5000);
-
         setTimer('msgMotivacional', () => {
             mensagemMotivacional(todos, feitos);
-        }, 1000)
+        }, 1500)
+
+        setTimer('timeoutProgresso', () => {
+            barra_progresso.classList.remove('ativo');
+        }, 2500);
     };
 };
 
@@ -368,9 +373,7 @@ async function mensagemMotivacional() {
 
     span.textContent = array_msg_motivacionais[aleatorizado];
 
-    if (aleatorizado === 0) {
-        span.innerHTML += '<svg><use href="#icon_foguete" /></svg>';
-    };
+    if (aleatorizado === 0) span.innerHTML += '<svg><use href="#icon_foguete" /></svg>';
 
     msg_motivacional.classList.add('aberto');
     linha_msg_motivacional.classList.add('aberto');
@@ -383,7 +386,7 @@ async function mensagemMotivacional() {
 
     setTimer('streakVerificacao', () => {
         streakVerificacao();
-    }, 1500);
+    }, 2500);
 
 }
 

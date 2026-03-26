@@ -1,10 +1,11 @@
 :root {
   --texto_primario: #e6eaf2;
   --texto_secundario: #9aa4b2;
-  --texto_terciario: #5c6675;
+  --texto_terciario: #2549ba;
   --neon_primario: #a855f7;
   --neon_secundario: #00cfff;
   --neon_terciario: #00ff9c;
+  --neon_gold: #ffe600;
 }
 
 * {
@@ -13,7 +14,7 @@
   border: 0;
   box-sizing: border-box;
   text-decoration: none;
-  font-family: "Inter", sans-serif;
+  font-family: "Press Start 2P", monospace;
   list-style: none;
 }
 
@@ -26,7 +27,7 @@ html {
   scroll-behavior: smooth;
   font-size: 62.5%;
   color: var(--texto_primario);
-  background: radial-gradient(circle at top, #0b0f1a, #05070d 70%);
+  /* background: radial-gradient(circle at top, #0b0f1a, #05070d 70%); */
 }
 
 html,
@@ -36,17 +37,26 @@ body {
 }
 
 body {
-  background:
+  /* background:
     linear-gradient(120deg, rgba(168, 85, 247, 0.15), transparent 40%),
-    linear-gradient(300deg, rgba(0, 255, 156, 0.1), transparent 40%);
+    linear-gradient(300deg, rgba(0, 255, 156, 0.1), transparent 40%); */
   padding: 2% 5%;
+  background:
+    /* linear-gradient(
+        rgba(0, 0, 0, 0),
+        transparent,
+        transparent,
+        rgba(0, 0, 0, 0)
+      )
+      no-repeat, */ url("../imagens/background_pixelado.webp")
+    no-repeat center / cover;
 }
 
 h1,
 h2,
 h3 {
-  font-family: "Poppins", sans-serif;
   letter-spacing: 1px;
+  line-height: 40px;
 }
 
 .linha {
@@ -76,15 +86,17 @@ header {
   flex-direction: column;
   text-align: center;
   justify-content: center;
-  height: 20dvh;
+  height: 15dvh;
   gap: 25px;
 }
 
 header h1 {
-  font-size: 3rem;
-  text-shadow:
-    0 0 5px rgba(255, 255, 255, 0.1),
-    0 0 10px currentColor;
+  font-size: 2rem;
+  text-shadow: 0 0 10px currentColor;
+  border: 3px solid rgba(126, 41, 224, 0.73);
+  border-radius: 5px;
+  padding: 10px;
+  background: linear-gradient(100deg, #200273ad, #170e78b2);
 }
 
 header h1 span:first-of-type {
@@ -100,7 +112,8 @@ header h1 span:nth-of-type(3) {
 }
 
 header p {
-  font-size: 1.5rem;
+  font-size: 1rem;
+  line-height: 20px;
 }
 
 /* INPUT --------------------------------------------------------- */
@@ -126,11 +139,12 @@ header p {
 
 #input_container input {
   width: 100%;
-  background-color: rgba(128, 128, 128, 0.2);
+  background-color: rgb(10, 43, 104);
   color: var(--texto_primario);
-  border: 2px solid var(--texto_terciario);
+  border: 2px solid var(--texto_secundario);
   border-radius: 5px;
-  padding: 5px 10px;
+  padding: 10px;
+  letter-spacing: 1px;
 }
 
 input:focus {
@@ -158,11 +172,11 @@ input:focus {
 }
 
 #input_container button {
-  color: var(--texto_primario);
-  background-color: #39b325;
+  color: black;
+  background-color: #56e041;
   padding: 10px 20px;
   border-radius: 5px;
-  font-size: 1.7rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
@@ -172,14 +186,22 @@ input:focus {
 
 #sequencia {
   position: absolute;
-  top: 45%;
-  width: 90vw;
+  bottom: 5%;
+  width: 102vw;
   justify-items: center;
   z-index: 1;
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 20px;
-  padding: 10px;
-  transform: scale(0);
+  border: 3px solid var(--neon_primario);
+  background:
+    linear-gradient(
+        rgba(0, 0, 0, 0.5),
+        transparent,
+        transparent,
+        rgba(0, 0, 0, 0.5)
+      )
+      no-repeat,
+    url("../imagens/background_pixelado.webp") no-repeat top / cover;
+  padding: 15px 5px;
+  transform: translateX(-100%);
   opacity: 0;
   transition:
     opacity 0.5s,
@@ -188,21 +210,21 @@ input:focus {
 
 #sequencia h2 {
   display: flex;
-  gap: 5px;
   align-items: center;
   font-size: 2rem;
-  color: #ffd93d;
-  text-shadow: 0 0 8px rgba(255, 217, 61, 0.6);
+  color: var(--neon_gold);
+  text-shadow: 0 0 8px currentColor;
 }
 
 #sequencia.streak {
-  transform: scale(1);
+  transform: translateX(0);
   opacity: 1;
-  animation: pop 0.5s ease;
+  /* animation: pop 0.5s ease; */
 }
 
 #sequencia svg {
-  height: 25px;
+  height: 40px;
+  margin-right: 15px;
 }
 
 #sequencia span {
@@ -232,11 +254,11 @@ input:focus {
   height: 20px;
   transform: scaleY(0.6);
   margin: 15px 0;
-  border-radius: 50px;
+  border-radius: 5px;
   background-color: white;
-  border: 2px solid var(--texto_terciario);
+  border: 3px solid var(--neon_gold);
   overflow: hidden;
-  box-shadow: 0 0 15px rgba(0, 207, 255, 0.5);
+  box-shadow: 0 0 10px currentColor;
   transition:
     height 1s ease,
     opacity 0.4s ease,
@@ -306,9 +328,9 @@ input:focus {
 #msg_motivacional {
   height: 0;
   overflow: hidden;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: var(--neon_terciario);
+  color: var(--neon_gold);
   align-content: start;
   transition:
     padding 0.5s,
@@ -354,11 +376,13 @@ input:focus {
 #tarefas_container {
   width: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 53dvh;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
-  background-color: rgba(33, 38, 56, 0.5);
+  background: linear-gradient(45deg, rgba(35, 10, 60, 0.9), rgba(10, 5, 20, 1));
+  box-shadow: 0 0 10px var(--texto_terciario);
 }
 
 #tarefas_container.pronto {
@@ -406,7 +430,7 @@ li.recem_criado {
 }
 
 li:not(li:first-of-type) {
-  border-top: 1px solid transparent;
+  border-top: 3px solid transparent;
   animation: criando_borda 1.5s forwards;
 }
 
@@ -428,9 +452,9 @@ li > input {
 }
 
 #tarefas_container .checkbox {
-  width: 25px;
+  width: 35px;
   aspect-ratio: 1;
-  border: 2px solid var(--texto_terciario);
+  border: 2px solid var(--neon_gold);
   border-radius: 5px;
   margin-left: 20px;
   position: relative;
@@ -445,29 +469,47 @@ li input:checked {
   width: 0;
 }
 
-li input:checked ~ .checkbox,
-li input:checked ~ span {
-  color: var(--neon_terciario);
-  text-shadow:
-    0 0 5px rgba(255, 255, 255, 0.2),
-    0 0 8px currentColor;
-  opacity: 0.5;
-  text-decoration: line-through;
-  text-decoration-color: white;
-  text-decoration-thickness: 2px;
-}
-
 li input:checked ~ .checkbox {
+  color: var(--neon_gold);
   box-shadow: 0 0 10px currentColor;
 }
 
-li svg {
+li .checkbox svg {
   opacity: 0;
   position: absolute;
-  height: 120%;
-  top: -30%;
-  left: 20%;
+  height: 70%;
+  /* top: -0%; */
+  left: 15%;
   transition: opacity 0.3s;
+}
+
+li .coin {
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: 5vw;
+  height: 50px;
+  opacity: 0;
+  padding: 8px;
+  color: var(--neon_gold);
+}
+
+li .coin svg {
+  height: 100%;
+}
+
+li input:checked ~ .coin {
+  animation: floatUp 0.5s;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
 li input:checked ~ .checkbox > svg {

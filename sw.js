@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
   // 🔊 sons essenciais
   "./src/audio/create.ogg",
   "./src/audio/check.ogg",
-  "./src/audio/grand_finale.ogg"
+  "./src/audio/grand_finale_2.ogg"
 ];
 
 // INSTALL → garante offline base
