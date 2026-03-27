@@ -16,6 +16,10 @@
   text-decoration: none;
   font-family: "Press Start 2P", monospace;
   list-style: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 *:focus-visible {
@@ -338,8 +342,8 @@ input:focus {
 }
 
 #msg_motivacional.aberto {
-  padding: 1dvh 0 3dvh 0;
-  margin: 1dvh 0 2dvh 0;
+  padding: 1.5dvh 0 3dvh 0;
+  margin: 1dvh 0;
 }
 
 #msg_motivacional > span {
@@ -348,10 +352,10 @@ input:focus {
 }
 
 #msg_motivacional svg {
-  height: 30px;
-  margin-left: 5px;
   position: absolute;
-  top: -20%;
+  height: 30px;
+  margin-left: 10px;
+  top: -50%;
 }
 
 #separacao_mensagem_motivacional {
@@ -410,18 +414,20 @@ input:focus {
 /* --------- scrollbar */
 
 li {
+  /* width: 100%; */
   position: relative;
   display: flex;
   gap: 15px;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   text-transform: capitalize;
-  padding: 20px 0;
+  padding: 15px;
   opacity: 1;
   transform: translateY(0);
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
+  line-height: 25px;
 }
 
 li.recem_criado {
@@ -453,10 +459,10 @@ li > input {
 
 #tarefas_container .checkbox {
   width: 35px;
+  min-width: 35px;
   aspect-ratio: 1;
   border: 2px solid var(--neon_gold);
   border-radius: 5px;
-  margin-left: 20px;
   position: relative;
 }
 
@@ -484,12 +490,10 @@ li .checkbox svg {
 }
 
 li .coin {
-  overflow: hidden;
-  margin-left: auto;
-  margin-right: 5vw;
-  height: 50px;
+  position: absolute;
+  right: 25px;
+  height: 30px;
   opacity: 0;
-  padding: 8px;
   color: var(--neon_gold);
 }
 
@@ -498,7 +502,7 @@ li .coin svg {
 }
 
 li input:checked ~ .coin {
-  animation: floatUp 0.5s;
+  animation: floatUp 1s;
 }
 
 @keyframes floatUp {
