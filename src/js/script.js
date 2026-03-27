@@ -135,11 +135,6 @@ function add() {
     criandoTarefa(texto);
 
     campo_digitacao.value = '';
-
-    lista.scrollTo({
-        top: lista.scrollHeight,
-        behavior: 'smooth',
-    });
 }
 
 function criandoTarefa(tarefa) {
@@ -364,7 +359,7 @@ const array_msg_motivacionais = ["Você tá voando", "Boa!!", "Mais uma", "Disci
 async function mensagemMotivacional() {
     const aleatorizado = Math.floor(Math.random() * array_msg_motivacionais.length);
 
-    lista.scrollTo({
+    if (lista.scrollTop > 50) lista.scrollTo({
         top: 0,
         behavior: 'smooth',
     });

@@ -413,6 +413,11 @@ input:focus {
 
 /* --------- scrollbar */
 
+ul {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 li {
   /* width: 100%; */
   position: relative;
