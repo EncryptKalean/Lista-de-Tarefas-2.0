@@ -1,4 +1,4 @@
-const CACHE_NAME = "lista-tarefas-v1";
+const CACHE_NAME = "lista-tarefas-v1.1";
 
 // arquivos essenciais (app shell)
 const STATIC_ASSETS = [
