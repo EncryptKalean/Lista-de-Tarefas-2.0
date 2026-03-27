@@ -42,7 +42,7 @@ Esse projeto é um **Progressive Web App (PWA)** — ou seja, funciona como um a
 
 ## 📸 Preview
 
-![Lista de Tarefas 2.0 Preview](https://github.com/EncryptKalean/Lista-de-Tarefas-2.0/blob/main/src/imagens/preview.webp?raw=true)
+![Lista de Tarefas 2.0 Preview](https://github.com/EncryptKalean/Lista-de-Tarefas-2.0/blob/main/preview.webp?raw=true)
 
 ---
 
