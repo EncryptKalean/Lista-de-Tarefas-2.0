@@ -1,0 +1,112 @@
+/* streak ------------------------------------------ */
+/* streak ------------------------------------------ */
+/* streak ------------------------------------------ */
+
+#sequencia {
+  position: absolute;
+  bottom: 5%;
+  width: 102vw;
+  justify-items: center;
+  z-index: 1;
+  border: 3px solid var(--neon_primario);
+  background:
+    linear-gradient(
+        rgba(0, 0, 0, 0.5),
+        transparent,
+        transparent,
+        rgba(0, 0, 0, 0.5)
+      )
+      no-repeat,
+    url("../imagens/background_pixelado.webp") no-repeat top / cover;
+  padding: 15px 5px;
+  transform: translateX(-100%);
+  opacity: 0;
+  transition:
+    opacity 0.5s,
+    transform 0.5s;
+}
+
+#sequencia h2 {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  color: var(--neon_gold);
+  text-shadow: 0 0 8px currentColor;
+}
+
+#sequencia.streak {
+  transform: translateX(0);
+  opacity: 1;
+  /* animation: pop 0.5s ease; */
+}
+
+#sequencia svg {
+  height: 40px;
+  margin-right: 15px;
+}
+
+#sequencia span {
+  font-size: 2.3rem;
+}
+
+#sequencia span.pop {
+  animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(2);
+  }
+}
+
+/* MENSAGEM MOTIVACIONAL ---------------------------------------- */
+/* MENSAGEM MOTIVACIONAL ---------------------------------------- */
+/* MENSAGEM MOTIVACIONAL ---------------------------------------- */
+
+#msg_motivacional {
+  height: 0;
+  overflow: hidden;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--neon_gold);
+  align-content: start;
+  transition:
+    padding 0.5s,
+    margin 1s;
+}
+
+#msg_motivacional.aberto {
+  padding: 1.5dvh 0 3dvh 0;
+  margin: 1dvh 0;
+}
+
+#msg_motivacional > span {
+  position: relative;
+  text-shadow: 0 0 15px currentColor;
+}
+
+#msg_motivacional svg {
+  position: absolute;
+  height: 30px;
+  margin-left: 10px;
+  top: -50%;
+}
+
+#separacao_mensagem_motivacional {
+  height: 1px;
+  padding: 0.5px;
+  transform: scaleY(0);
+  opacity: 0;
+  transition:
+    opacity 1s,
+    transform 1s;
+}
+
+#separacao_mensagem_motivacional.aberto {
+  transform: scaleY(1);
+  opacity: 0.2;
+}

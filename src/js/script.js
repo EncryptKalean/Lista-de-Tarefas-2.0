@@ -6,12 +6,16 @@ function unlockAudio() {
         .then(() => {
             audio.pause();
             audio.currentTime = 0;
-            console.log("Áudio desbloqueado");
+            // console.log("Áudio desbloqueado");
         })
         .catch(() => { });
 }
 
 document.addEventListener("click", unlockAudio, { once: true });
+
+
+
+
 
 // SISTEMAS BASICOS -------------------------------------------
 // SISTEMAS BASICOS -------------------------------------------
@@ -29,14 +33,26 @@ function setTimer(nome, fn, tempo) {
     timers[nome] = setTimeout(fn, tempo);
 };
 
+const hoje_verificacao = new Date().getDate();
+let ultimo_acesso = localStorage.getItem('ultimo_acesso');
+
 const tarefas_array = (JSON.parse(localStorage.getItem('tarefas_array')) ?? []);
 
-let historico_feitos = +localStorage.getItem('historico_feitos');
+let tarefas_infos = (JSON.parse(localStorage.getItem('tarefas_infos')) ?? {
+    total: 0,
+    dias: 0,
+    hoje: 0
+});
 
 let todos = tarefas_array.length;
 let feitos = 0;
 let porcentagem;
 
+if (hoje_verificacao != ultimo_acesso) {
+    localStorage.removeItem('streak_hoje');
+    tarefas_infos.hoje = 0;
+    console.log('dia diferente')
+};
 
 navigator.serviceWorker.register("sw.js").then(reg => {
     // força verificar update
@@ -57,6 +73,9 @@ navigator.serviceWorker.register("sw.js").then(reg => {
         });
     });
 });
+
+
+
 
 
 // AUDIOS ------------------------------
@@ -102,6 +121,65 @@ function tocarSom(src, time) {
     audio.play();
 }
 
+
+
+
+
+// PLAYER ------------------------------
+// PLAYER ------------------------------
+// PLAYER ------------------------------
+const level_container = document.querySelector('#level_info');
+const level_atual_texto = level_container.querySelector('span');
+const level_proximo_texto = level_container.querySelector('#level_proximo');
+const barra_level = level_container.querySelector('#barra_level');
+
+let player = (JSON.parse(localStorage.getItem('player_infos')) ?? { nivel: 0, xp: 0, });
+
+barraLevelPorcentagem();
+
+function calculandoXP(origem_xp) {
+    const valor = balanceamentoXP[origem_xp];
+    console.log('+' + valor + ' xp ' + origem_xp);
+    player.xp += valor;
+
+    const xpNecessario = player.nivel * 100;
+
+    if (player.xp >= xpNecessario) {
+        player.xp -= xpNecessario;
+        player.nivel++;
+    };
+
+    localStorage.setItem('player_infos', JSON.stringify(player));
+
+    barraLevelPorcentagem();
+};
+
+function barraLevelPorcentagem() {
+    const xpNecessario = player.nivel * 100;
+
+    level_atual_texto.textContent = player.nivel;
+    level_proximo_texto.textContent = player.nivel + 1;
+
+    const level_porcentagem = ((player.xp / xpNecessario) * 100) / 100;
+
+    barra_level.style.transform = `scaleX(${level_porcentagem})`;
+
+    // console.log(player);
+    // console.log(xpNecessario);
+};
+
+const balanceamentoXP = {
+    check: 10,
+    progresso: 5,
+    progresso_completo: 10,
+    streak_hoje: 3,
+    // streak_de_dias:,
+};
+
+
+
+
+
 // CRIANDO E APAGANDO TAREFAS ------------------------------
 // CRIANDO E APAGANDO TAREFAS ------------------------------
 // CRIANDO E APAGANDO TAREFAS ------------------------------
@@ -112,11 +190,15 @@ const adicionar_btn = input_container.querySelector('button');
 const apagar_tudo_btn = document.getElementById('delete_all');
 const apagar_tudo_alerta = document.getElementById('delete_alerta');
 const footer = document.querySelector('footer');
-const footer_span = footer.querySelector('span');
+const span_hoje = footer.querySelector('span');
+const span_dias = footer.querySelector('#dias span');
+const span_total = footer.querySelector('#total span');
 
-if (historico_feitos > 0) {
+if (tarefas_infos.hoje > 0) {
     if (footer.classList.contains('nada')) footer.classList.remove('nada');
-    footer_span.textContent = historico_feitos;
+    span_hoje.textContent = tarefas_infos.hoje;
+    span_dias.textContent = tarefas_infos.dias;
+    span_total.textContent = tarefas_infos.total;
 }
 
 adicionar_btn.addEventListener('click', () => { add() });
@@ -135,6 +217,9 @@ function add() {
     criandoTarefa(texto);
 
     campo_digitacao.value = '';
+
+    ultimo_acesso = localStorage.setItem('ultimo_acesso', hoje_verificacao);
+    ultimo_acesso = hoje_verificacao;
 }
 
 function criandoTarefa(tarefa) {
@@ -203,9 +288,14 @@ function render(tarefa, novo) {
         coin_div.classList.add('coin');
         coin_div.innerHTML = '<svg><use href="#icon_coin" /></svg>';
 
+        const span_xp = document.createElement('span');
+        span_xp.classList.add('xp_texto');
+        span_xp.textContent = `+${balanceamentoXP['check']} XP`;
+
         li.append(checkbox_input);
         li.append(checkbox_div);
         li.append(span);
+        coin_div.append(span_xp);
         li.append(coin_div);
 
         fragment.append(li);
@@ -216,7 +306,6 @@ function render(tarefa, novo) {
     if (novo) { requestAnimationFrame(() => { novosItens.forEach(li => { li.classList.remove('recem_criado'); }); }); };
 
     if (todos > 0 && !lista.classList.contains('pronto')) {
-        console.log('pronto');
         lista.classList.add('pronto');
     };
 
@@ -225,6 +314,7 @@ function render(tarefa, novo) {
 
 lista.addEventListener('change', (click) => {
     if (click.target.type !== 'checkbox') return;
+    if (footer.classList.contains('nada')) footer.classList.remove('nada');
 
     const id = click.target.closest('li').id;
 
@@ -232,17 +322,22 @@ lista.addEventListener('change', (click) => {
 
     tocarSom(sons.check);
 
-    feitos++
-    historico_feitos++
+    feitos++;
+    tarefas_infos.hoje++;
+    tarefas_infos.total++;
 
-    if (footer.classList.contains('nada')) footer.classList.remove('nada');
-    footer_span.textContent = historico_feitos;
+    span_hoje.textContent = tarefas_infos.hoje;
 
     setTimer('save', () => {
         localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
-        localStorage.setItem('historico_feitos', historico_feitos);
+        localStorage.setItem('tarefas_infos', JSON.stringify(tarefas_infos));
         progressoBarra();
     }, 500);
+
+    calculandoXP('check');
+
+    ultimo_acesso = localStorage.setItem('ultimo_acesso', hoje_verificacao);
+    ultimo_acesso = hoje_verificacao;
 });
 
 apagar_tudo_btn.addEventListener('click', () => { apagar_tudo_alerta.classList.add('aberto'); });
@@ -274,7 +369,7 @@ function reset() {
 
     barra_progresso.classList.remove('idle');
 
-    streackArray = [false, false, false, false];
+    streakArray = [false, false, false, false];
 
     span.textContent = 0;
 
@@ -285,6 +380,10 @@ function reset() {
 
     apagar_tudo_btn.classList.add('escondido');
 }
+
+
+
+
 
 // BARRA DE PROGRESSO -----------------------------
 // BARRA DE PROGRESSO -----------------------------
@@ -300,17 +399,10 @@ async function progressoBarra(renderizando) {
 
     let background = ``;
 
-    if (!renderizando) {
-        barra_progresso.classList.add('ativo');
-
-        tocarSom(sons.progress, 0.4);
-    };
-
     barra_desprogresso.style.transform = `scaleX(${(100 - porcentagem) / 100})`;
 
     for (let i = 0; i < cores_progresso.length; i++) {
         if (porcentagem > 95 && i == cores_progresso.length - 1) {
-
             if (!renderizando) {
                 boom();
                 setTimeout(boom, 300);
@@ -319,6 +411,12 @@ async function progressoBarra(renderizando) {
                 setTimeout(() => {
                     tocarSom(sons.completo)
                 }, 500)
+
+                calculandoXP('progresso_completo');
+
+                tarefas_infos.dias++;
+
+                localStorage.setItem('tarefas_infos', JSON.stringify(tarefas_infos));
             };
 
             await delay(1000);
@@ -330,13 +428,21 @@ async function progressoBarra(renderizando) {
             barra_progresso.classList.remove('completo');
             barra_progresso.classList.add('idle');
         }
-        else if (porcentagem >= 5 && i == 0) background += cores_progresso[0];
+        else if (porcentagem >= 5 && i == 0) {
+            background += cores_progresso[0];
+
+            if (!renderizando) calculandoXP('progresso');
+        }
         else if (porcentagem >= (i + 1) * 20) background += `, ${cores_progresso[i]}`;
     };
 
     barra_progresso.style.background = `linear-gradient(90deg, ${background})`;
 
     if (!renderizando) {
+        barra_progresso.classList.add('ativo');
+
+        tocarSom(sons.progress, 0.4);
+
         setTimer('msgMotivacional', () => {
             mensagemMotivacional(todos, feitos);
         }, 1500)
@@ -347,6 +453,10 @@ async function progressoBarra(renderizando) {
     };
 };
 
+
+
+
+
 // MENSAGEM MOTIVACIONAL ----------------------------
 // MENSAGEM MOTIVACIONAL ----------------------------
 // MENSAGEM MOTIVACIONAL ----------------------------
@@ -354,21 +464,61 @@ async function progressoBarra(renderizando) {
 const msg_motivacional = document.getElementById('msg_motivacional');
 const span = msg_motivacional.querySelector('span');
 const linha_msg_motivacional = document.getElementById('separacao_mensagem_motivacional');
-const array_msg_motivacionais = ["Você tá voando", "Boa!!", "Mais uma", "Disciplina > motivação"];
+const array_msg_motivacionais = {
+    nivel_1: [
+        "Boa!",
+        "Mais uma",
+        "Tá começando bem",
+        "Vamos nessa",
+        "Primeiro passo feito"
+    ],
+    nivel_2: [
+        "Ritmo bom",
+        "Você tá indo bem",
+        "Não para agora",
+        "Foco total",
+        "Já embalou"
+    ],
+    nivel_3: [
+        "Você tá voando",
+        "Disciplina > motivação",
+        "Agora ninguém te para",
+        "Isso aqui é consistência",
+        "Tá diferente hoje hein"
+    ],
+    nivel_4: [
+        "Só mais um",
+        "Tá muito perto",
+        "Fecha isso",
+        "Último esforço",
+        "Não quebra agora"
+    ]
+};
 
-async function mensagemMotivacional() {
-    const aleatorizado = Math.floor(Math.random() * array_msg_motivacionais.length);
+function mensagemMotivacional() {
+    const calculando_nivel = nivelDeMensagem(porcentagem);
+    const nivel = array_msg_motivacionais[calculando_nivel];
+    const aleatorizado = Math.floor(Math.random() * nivel.length);
 
-    if (lista.scrollTop > 50) lista.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
+    // Volta a lista pro  topo quando estiver muito abaixo
+    if (lista.scrollTop > 50) {
+        lista.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    }
 
-    await delay(500);
+    span.textContent = nivel[aleatorizado];
 
-    span.textContent = array_msg_motivacionais[aleatorizado];
-
-    if (aleatorizado === 0) span.innerHTML += '<svg><use href="#icon_foguete" /></svg>';
+    // SVGs
+    if (aleatorizado === 0) {
+        // SVG do Fogo
+        if (calculando_nivel === 'nivel_2') span.innerHTML += '<svg><use href="#icon_fogo" /></svg>';
+        // SVG do Foguete
+        else if (calculando_nivel === 'nivel_3') span.innerHTML += '<svg><use href="#icon_foguete" /></svg>';
+        // SVG do Correct
+        else if (calculando_nivel === 'nivel_4') span.innerHTML += '<svg><use href="#icon_correct" /></svg>';
+    }
 
     msg_motivacional.classList.add('aberto');
     linha_msg_motivacional.classList.add('aberto');
@@ -382,29 +532,46 @@ async function mensagemMotivacional() {
     setTimer('streakVerificacao', () => {
         streakVerificacao();
     }, 2500);
-
 }
+
+function nivelDeMensagem(porcent) {
+    if (!porcent) porcent = 0;
+
+    if (porcent < 30) return 'nivel_1';
+    else if (porcent < 60) return 'nivel_2';
+    else if (porcent < 90) return 'nivel_3';
+    else if (porcent < 100) return 'nivel_4';
+}
+
+
+
+
 
 // STREAK -----------------------------------------
 // STREAK -----------------------------------------
 // STREAK -----------------------------------------
 
 const streak = document.getElementById('sequencia');
-let streackArray = [false, false, false, false];
+let streakArray = (localStorage.getItem('streak_hoje') ?? [false, false, false, false]);
 
 async function streakVerificacao() {
-
     let play = false;
 
-    for (let i = 0; i < streackArray.length; i++) {
-        if (porcentagem >= (i + 1) * 20 && streackArray[i] == false) {
-            streackArray[i] = true;
+    for (let i = 1; i < streakArray.length; i++) {
+        if (porcentagem >= (i * 20) && streakArray[(i - 1)] == false) {
+            streakArray[(i - 1)] = true;
             play = true;
             console.log('----------');
-            console.log(streackArray[i]);
-            console.log(i + 1);
+            console.log(streakArray);
             console.log(porcentagem);
-            console.log((i + 1) * 20);
+            console.log(i);
+            console.log(i * 20);
+
+            calculandoXP('streak_hoje');
+
+            localStorage.setItem('streak_hoje');
+
+            break
         }
     };
 
@@ -426,104 +593,27 @@ async function streakVerificacao() {
     };
 };
 
+
+
+
+
 // Inicio automatico
 if (tarefas_array.length > 0) render(tarefas_array);
 
 
-// CONFETTI -----------------------------
-// CONFETTI -----------------------------
-// CONFETTI -----------------------------
 
-// OBS: Não fui eu que fiz essa parte do codigo.
 
-const canvas = document.getElementById("confetti");
-const ctx = canvas.getContext("2d");
 
-let W, H;
-function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
+/*
+    FEITOS:
+    - SISTEMA DE NIVEIS NAS MENSAGENS MOTIVACIONAIS
+    - CONFETES
+    - STREAK DIARIO
+    - TOTAL DE TAREFAS COMPLETADAS AO TODO
 
-const COLORS = ["#f00", "#0f0", "#00f", "#ff0", "#0ff", "#f0f"];
+*/
 
-const CONFETTI_COUNT = 40; // 🔥 leve + bonito
-
-let confetti = [];
-
-function createConfetti() {
-    const angle = Math.random() * Math.PI - Math.PI; // cone pra cima
-    const force = Math.random() * 10 + 8;
-
-    return {
-        x: W / 2,
-        y: H,
-
-        size: Math.random() * 6 + 2,
-
-        speedX: Math.cos(angle) * force,
-        speedY: Math.sin(angle) * force,
-
-        gravity: 0.15,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        rotation: Math.random() * 360
-    };
-}
-
-function boom() {
-    for (let i = 0; i < CONFETTI_COUNT; i++) {
-        confetti.push(createConfetti());
-    }
-    tocarSom(sons.confete);
-}
-
-function update() {
-    ctx.clearRect(0, 0, W, H);
-
-    for (let i = 0; i < confetti.length; i++) {
-        let c = confetti[i];
-
-        // física
-        c.speedY += c.gravity;
-        c.speedX *= 0.99; // resistência do ar
-        c.speedY *= 0.99;
-
-        c.y += c.speedY;
-        c.x += c.speedX;
-
-        // leve efeito visual
-        c.size *= 0.995;
-
-        // desenha
-        ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.rotate(c.rotation * Math.PI / 180);
-
-        ctx.fillStyle = c.color;
-        ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
-
-        ctx.restore();
-
-        // remove quando sai da tela (ESSENCIAL)
-        if (c.y > H + 20) {
-            confetti.splice(i, 1);
-            i--;
-        }
-    }
-
-    setTimeout(() => requestAnimationFrame(update), 30);
-}
-
-update();
-
-// SISTEMA DE NIVEIS NAS MENSAGENS MOTIVACIONAIS
 // VARIAÇÃO DE SONS
-// CONFETES
-// MARCAR E DESMARCA TAREFAS (BARRA PODE VOLTAR)
 // ----------------- GAME -------------------------
-// STREAK DIARIO
-// TOTAL DE TAREFAS COMPLETADAS AO TODO
 // SISTEMA DE NIVEL + RECOMPENSA (EX: NOVAS CORES, SONS, EFEITOS)
 // SISTEMA DE DESAFIOS

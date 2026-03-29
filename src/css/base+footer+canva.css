@@ -1,0 +1,144 @@
+/* BASE --------------------------------------------------------- */
+/* BASE --------------------------------------------------------- */
+/* BASE --------------------------------------------------------- */
+
+:root {
+  --texto_primario: #e6eaf2;
+  --texto_secundario: #9aa4b2;
+  --texto_terciario: #2549ba;
+  --neon_primario: #a855f7;
+  --neon_secundario: #00cfff;
+  --neon_terciario: #00ff9c;
+  --neon_gold: #ffe600;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Press Start 2P", monospace;
+  list-style: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+*:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 5px;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 62.5%;
+  color: var(--texto_primario);
+  /* background: radial-gradient(circle at top, #0b0f1a, #05070d 70%); */
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  /* background:
+    linear-gradient(120deg, rgba(168, 85, 247, 0.15), transparent 40%),
+    linear-gradient(300deg, rgba(0, 255, 156, 0.1), transparent 40%); */
+  padding: 2% 5%;
+  padding-top: 0;
+  background:
+    /* linear-gradient(
+        rgba(0, 0, 0, 0),
+        transparent,
+        transparent,
+        rgba(0, 0, 0, 0)
+      )
+      no-repeat, */ url("../imagens/background_pixelado.webp")
+    no-repeat center / cover;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: 1px;
+  line-height: 40px;
+}
+
+.linha {
+  width: 90%;
+  height: 1px;
+  margin: 0 auto;
+  color: white;
+  background-color: var(--neon_secundario);
+  box-shadow: 0 0 15px currentColor;
+  opacity: 0.2;
+}
+
+svg {
+  height: 100%;
+  aspect-ratio: 1;
+}
+
+/* FOOTER -------------------------------------------------------- */
+/* FOOTER -------------------------------------------------------- */
+/* FOOTER -------------------------------------------------------- */
+
+footer {
+  display: flex;
+  position: fixed;
+  bottom: 10px;
+  left: -2%;
+  width: 104%;
+  height: 60px;
+  padding: 15px 10px;
+  border: 3px solid black;
+  justify-content: space-around;
+  background:
+    linear-gradient(
+        rgba(0, 0, 0, 0.3),
+        transparent,
+        transparent,
+        rgba(0, 0, 0, 0.3)
+      )
+      no-repeat,
+    url("../imagens/background_pixelado.webp") no-repeat center / cover;
+}
+
+footer.nada {
+  opacity: 0;
+}
+
+footer > div {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+footer svg {
+  height: 30px;
+}
+
+footer #dias svg,
+footer #dias p {
+  color: var(--neon_gold);
+}
+
+footer #total svg,
+footer #total p {
+  color: var(--neon_secundario);
+}
+
+/* CANVAS -------------------------------------------------------- */
+/* CANVAS -------------------------------------------------------- */
+/* CANVAS -------------------------------------------------------- */
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}

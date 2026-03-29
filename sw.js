@@ -1,12 +1,17 @@
-const CACHE_NAME = "lista-tarefas-v1.1";
+const CACHE_NAME = "lista-tarefas-v1.2.1";
 
 // arquivos essenciais (app shell)
 const STATIC_ASSETS = [
   "./",
   "./index.html",
-  "./src/css/base.css",
+  "./src/css/base+footer+canva.css",
+  "./src/css/header+input.css",
+  "./src/css/barra_progresso.css",
+  "./src/css/streak+mensagem.css",
+  "./src/css/lista+delete.css",
   "./src/css/responsivo.css",
   "./src/js/script.js",
+  "./src/js/confettu.js",
   "./manifest.json",
   // 🔊 sons essenciais
   "./src/audio/create.ogg",
