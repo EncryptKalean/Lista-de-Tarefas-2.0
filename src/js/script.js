@@ -33,26 +33,57 @@ function setTimer(nome, fn, tempo) {
     timers[nome] = setTimeout(fn, tempo);
 };
 
-const hoje_verificacao = new Date().getDate();
-let ultimo_acesso = localStorage.getItem('ultimo_acesso');
-
 const tarefas_array = (JSON.parse(localStorage.getItem('tarefas_array')) ?? []);
 
 let tarefas_infos = (JSON.parse(localStorage.getItem('tarefas_infos')) ?? {
     total: 0,
     dias: 0,
-    hoje: 0
+    hoje: 0,
+    progresso_completo_hoje: false,
 });
 
 let todos = tarefas_array.length;
 let feitos = 0;
 let porcentagem;
 
+const hoje_verificacao = new Date().getDate();
+let ultimo_acesso = localStorage.getItem('ultimo_acesso');
+
+function atualizandoTarefasInfos(alvo) {
+    if (alvo === 'reset') tarefas_infos.hoje = 0;
+    else if (alvo === 'hoje') tarefas_infos.hoje++;
+    else if (alvo === 'total') tarefas_infos.total++;
+    else if (alvo === 'dias') tarefas_infos.dias++;
+    else if (alvo === 'save') localStorage.setItem('tarefas_infos', JSON.stringify(tarefas_infos));
+    else if (alvo === 'ultimo_acesso') {
+        localStorage.setItem('ultimo_acesso', hoje_verificacao);
+        ultimo_acesso = hoje_verificacao;
+    }
+    else if (alvo === 'progresso_hoje') tarefas_infos.progresso_completo_hoje = true;
+
+    console.log('alteração no tarefas_infos: ' + alvo);
+}
+
 if (hoje_verificacao != ultimo_acesso) {
     localStorage.removeItem('streak_hoje');
-    tarefas_infos.hoje = 0;
-    console.log('dia diferente')
+    atualizandoTarefasInfos('reset');
+    console.log('dia diferente');
 };
+
+const footer = document.querySelector('footer');
+const span_hoje = footer.querySelector('span');
+const span_dias = footer.querySelector('#dias span');
+const span_total = footer.querySelector('#total span');
+
+if (tarefas_infos.hoje > 0) {
+    if (footer.classList.contains('nada')) footer.classList.remove('nada');
+    span_hoje.textContent = tarefas_infos.hoje;
+    span_dias.textContent = tarefas_infos.dias;
+    span_total.textContent = tarefas_infos.total;
+}
+
+
+
 
 navigator.serviceWorker.register("sw.js").then(reg => {
     // força verificar update
@@ -90,6 +121,10 @@ const sons = {
     check: {
         som: document.getElementById('som_check'),
         volume: 0.5,
+    },
+    xp: {
+        som: document.getElementById('som_xp'),
+        volume: 1,
     },
     fire_start: {
         som: document.getElementById('som_fire_start'),
@@ -142,7 +177,7 @@ function calculandoXP(origem_xp) {
     console.log('+' + valor + ' xp ' + origem_xp);
     player.xp += valor;
 
-    const xpNecessario = player.nivel * 100;
+    const xpNecessario = player.nivel * 150;
 
     if (player.xp >= xpNecessario) {
         player.xp -= xpNecessario;
@@ -189,17 +224,7 @@ const campo_digitacao = input_container.querySelector('input');
 const adicionar_btn = input_container.querySelector('button');
 const apagar_tudo_btn = document.getElementById('delete_all');
 const apagar_tudo_alerta = document.getElementById('delete_alerta');
-const footer = document.querySelector('footer');
-const span_hoje = footer.querySelector('span');
-const span_dias = footer.querySelector('#dias span');
-const span_total = footer.querySelector('#total span');
 
-if (tarefas_infos.hoje > 0) {
-    if (footer.classList.contains('nada')) footer.classList.remove('nada');
-    span_hoje.textContent = tarefas_infos.hoje;
-    span_dias.textContent = tarefas_infos.dias;
-    span_total.textContent = tarefas_infos.total;
-}
 
 adicionar_btn.addEventListener('click', () => { add() });
 campo_digitacao.addEventListener('keyup', (event) => { if (event.key === 'Enter') add(); });
@@ -218,8 +243,7 @@ function add() {
 
     campo_digitacao.value = '';
 
-    ultimo_acesso = localStorage.setItem('ultimo_acesso', hoje_verificacao);
-    ultimo_acesso = hoje_verificacao;
+    if (ultimo_acesso != hoje_verificacao) atualizandoTarefasInfos('ultimo_acesso');
 }
 
 function criandoTarefa(tarefa) {
@@ -323,21 +347,21 @@ lista.addEventListener('change', (click) => {
     tocarSom(sons.check);
 
     feitos++;
-    tarefas_infos.hoje++;
-    tarefas_infos.total++;
+    atualizandoTarefasInfos('hoje');
+    atualizandoTarefasInfos('total');
 
     span_hoje.textContent = tarefas_infos.hoje;
 
     setTimer('save', () => {
+        tocarSom(sons.xp);
         localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
-        localStorage.setItem('tarefas_infos', JSON.stringify(tarefas_infos));
+        atualizandoTarefasInfos('save');
         progressoBarra();
     }, 500);
 
     calculandoXP('check');
 
-    ultimo_acesso = localStorage.setItem('ultimo_acesso', hoje_verificacao);
-    ultimo_acesso = hoje_verificacao;
+    if (ultimo_acesso != hoje_verificacao) atualizandoTarefasInfos('ultimo_acesso');
 });
 
 apagar_tudo_btn.addEventListener('click', () => { apagar_tudo_alerta.classList.add('aberto'); });
@@ -412,11 +436,14 @@ async function progressoBarra(renderizando) {
                     tocarSom(sons.completo)
                 }, 500)
 
-                calculandoXP('progresso_completo');
+                if (!tarefas_infos.progresso_completo_hoje) {
+                    calculandoXP('progresso_completo');
 
-                tarefas_infos.dias++;
+                    atualizandoTarefasInfos('progresso_hoje');
+                    atualizandoTarefasInfos('dias');
+                    atualizandoTarefasInfos('save');
+                };
 
-                localStorage.setItem('tarefas_infos', JSON.stringify(tarefas_infos));
             };
 
             await delay(1000);
@@ -531,7 +558,7 @@ function mensagemMotivacional() {
 
     setTimer('streakVerificacao', () => {
         streakVerificacao();
-    }, 2500);
+    }, 2000);
 }
 
 function nivelDeMensagem(porcent) {
@@ -540,7 +567,7 @@ function nivelDeMensagem(porcent) {
     if (porcent < 30) return 'nivel_1';
     else if (porcent < 60) return 'nivel_2';
     else if (porcent < 90) return 'nivel_3';
-    else if (porcent < 100) return 'nivel_4';
+    else if (porcent <= 100) return 'nivel_4';
 }
 
 
@@ -552,24 +579,25 @@ function nivelDeMensagem(porcent) {
 // STREAK -----------------------------------------
 
 const streak = document.getElementById('sequencia');
-let streakArray = (localStorage.getItem('streak_hoje') ?? [false, false, false, false]);
+let streakArray = (JSON.parse(localStorage.getItem('streak_hoje')) ?? [false, false, false, false]);
 
 async function streakVerificacao() {
     let play = false;
 
     for (let i = 1; i < streakArray.length; i++) {
-        if (porcentagem >= (i * 20) && streakArray[(i - 1)] == false) {
+        const porcentagemAlvo = i * 19;
+        if (porcentagem >= porcentagemAlvo && streakArray[(i - 1)] == false) {
             streakArray[(i - 1)] = true;
             play = true;
             console.log('----------');
             console.log(streakArray);
             console.log(porcentagem);
             console.log(i);
-            console.log(i * 20);
+            console.log(porcentagemAlvo);
 
             calculandoXP('streak_hoje');
 
-            localStorage.setItem('streak_hoje');
+            localStorage.setItem('streak_hoje', JSON.stringify(streakArray));
 
             break
         }
