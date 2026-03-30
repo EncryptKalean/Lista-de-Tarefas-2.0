@@ -1,4 +1,4 @@
-// Ativador da permissão de audio no mobile
+// #region Ativador da permissão de audio no mobile
 const audio = new Audio("src/audios/check.ogg");
 
 function unlockAudio() {
@@ -13,13 +13,12 @@ function unlockAudio() {
 
 document.addEventListener("click", unlockAudio, { once: true });
 
+// #endregion
 
 
 
 
-// SISTEMAS BASICOS -------------------------------------------
-// SISTEMAS BASICOS -------------------------------------------
-// SISTEMAS BASICOS -------------------------------------------
+// #region SISTEMAS BASICOS
 
 const lista = document.getElementById('tarefas_container');
 const tarefas_container = lista.querySelector('ul');
@@ -105,13 +104,12 @@ navigator.serviceWorker.register("sw.js").then(reg => {
     });
 });
 
+// #endregion
 
 
 
 
-// AUDIOS ------------------------------
-// AUDIOS ------------------------------
-// AUDIOS ------------------------------
+// #region AUDIOS
 
 const sons = {
     lapis: {
@@ -124,7 +122,7 @@ const sons = {
     },
     xp: {
         som: document.getElementById('som_xp'),
-        volume: 1,
+        volume: 0.2,
     },
     fire_start: {
         som: document.getElementById('som_fire_start'),
@@ -156,13 +154,13 @@ function tocarSom(src, time) {
     audio.play();
 }
 
+// #endregion
 
 
 
 
-// PLAYER ------------------------------
-// PLAYER ------------------------------
-// PLAYER ------------------------------
+// #region PLAYER & XP
+
 const level_container = document.querySelector('#level_info');
 const level_atual_texto = level_container.querySelector('span');
 const level_proximo_texto = level_container.querySelector('#level_proximo');
@@ -170,18 +168,20 @@ const barra_level = level_container.querySelector('#barra_level');
 
 let player = (JSON.parse(localStorage.getItem('player_infos')) ?? { nivel: 0, xp: 0, });
 
-barraLevelPorcentagem();
+function xpNecessario() { return player.nivel * 100 };
 
 function calculandoXP(origem_xp) {
     const valor = balanceamentoXP[origem_xp];
     console.log('+' + valor + ' xp ' + origem_xp);
     player.xp += valor;
 
-    const xpNecessario = player.nivel * 150;
-
-    if (player.xp >= xpNecessario) {
-        player.xp -= xpNecessario;
+    if (player.xp >= xpNecessario()) {
+        player.xp -= xpNecessario();
         player.nivel++;
+        level_atual_texto.classList.add('pop');
+        setTimer('level_pop', () => {
+            level_atual_texto.classList.remove('pop');
+        }, 500)
     };
 
     localStorage.setItem('player_infos', JSON.stringify(player));
@@ -190,18 +190,14 @@ function calculandoXP(origem_xp) {
 };
 
 function barraLevelPorcentagem() {
-    const xpNecessario = player.nivel * 100;
-
     level_atual_texto.textContent = player.nivel;
     level_proximo_texto.textContent = player.nivel + 1;
 
-    const level_porcentagem = ((player.xp / xpNecessario) * 100) / 100;
+    const level_porcentagem = ((player.xp / xpNecessario()) * 100) / 100;
 
     barra_level.style.transform = `scaleX(${level_porcentagem})`;
-
-    // console.log(player);
-    // console.log(xpNecessario);
 };
+barraLevelPorcentagem();
 
 const balanceamentoXP = {
     check: 10,
@@ -211,13 +207,28 @@ const balanceamentoXP = {
     // streak_de_dias:,
 };
 
+function spawnXP(origemXP, posicao, delay) {
+    if (!delay) delay = 500;
+    const p = document.createElement('p');
+    p.textContent = `+${balanceamentoXP[origemXP]} XP`;
+    p.classList.add('xp_texto');
+
+    setTimeout(() => {
+        tocarSom(sons.xp);
+        posicao.append(p);
+
+        setTimeout(() => {
+            p.remove();
+        }, 2000)
+    }, delay)
+}
+
+// #endregion
 
 
 
 
-// CRIANDO E APAGANDO TAREFAS ------------------------------
-// CRIANDO E APAGANDO TAREFAS ------------------------------
-// CRIANDO E APAGANDO TAREFAS ------------------------------
+// #region TAREFAS
 
 const input_container = document.getElementById('input_container');
 const campo_digitacao = input_container.querySelector('input');
@@ -312,14 +323,9 @@ function render(tarefa, novo) {
         coin_div.classList.add('coin');
         coin_div.innerHTML = '<svg><use href="#icon_coin" /></svg>';
 
-        const span_xp = document.createElement('span');
-        span_xp.classList.add('xp_texto');
-        span_xp.textContent = `+${balanceamentoXP['check']} XP`;
-
         li.append(checkbox_input);
         li.append(checkbox_div);
         li.append(span);
-        coin_div.append(span_xp);
         li.append(coin_div);
 
         fragment.append(li);
@@ -329,9 +335,7 @@ function render(tarefa, novo) {
 
     if (novo) { requestAnimationFrame(() => { novosItens.forEach(li => { li.classList.remove('recem_criado'); }); }); };
 
-    if (todos > 0 && !lista.classList.contains('pronto')) {
-        lista.classList.add('pronto');
-    };
+    if (todos > 0 && !lista.classList.contains('pronto')) lista.classList.add('pronto');
 
     if (apagar_tudo_btn.classList.contains('escondido')) apagar_tudo_btn.classList.remove('escondido');
 };
@@ -350,10 +354,12 @@ lista.addEventListener('change', (click) => {
     atualizandoTarefasInfos('hoje');
     atualizandoTarefasInfos('total');
 
+    const posicao_XP = click.target.closest('li').querySelector('.coin');
+    spawnXP('check', posicao_XP);
+
     span_hoje.textContent = tarefas_infos.hoje;
 
     setTimer('save', () => {
-        tocarSom(sons.xp);
         localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
         atualizandoTarefasInfos('save');
         progressoBarra();
@@ -405,13 +411,12 @@ function reset() {
     apagar_tudo_btn.classList.add('escondido');
 }
 
+// #endregion
 
 
 
 
-// BARRA DE PROGRESSO -----------------------------
-// BARRA DE PROGRESSO -----------------------------
-// BARRA DE PROGRESSO -----------------------------
+// #region BARRA PROGRESSO
 
 const barra_progresso = document.getElementById('barra_progresso');
 const barra_desprogresso = barra_progresso.querySelector('#barra_desprogresso');
@@ -419,6 +424,7 @@ const barra_desprogresso = barra_progresso.querySelector('#barra_desprogresso');
 const cores_progresso = ["#ff3b3b", "#ff7a00", "#ffe600", "#00ff9f", "#00e0ff"]
 
 async function progressoBarra(renderizando) {
+
     porcentagem = (feitos / todos) * 100;
 
     let background = ``;
@@ -438,6 +444,7 @@ async function progressoBarra(renderizando) {
 
                 if (!tarefas_infos.progresso_completo_hoje) {
                     calculandoXP('progresso_completo');
+                    spawnXP('progresso_completo', barra_progresso, 1000);
 
                     atualizandoTarefasInfos('progresso_hoje');
                     atualizandoTarefasInfos('dias');
@@ -470,6 +477,8 @@ async function progressoBarra(renderizando) {
 
         tocarSom(sons.progress, 0.4);
 
+        spawnXP('progresso', barra_progresso, 1000);
+
         setTimer('msgMotivacional', () => {
             mensagemMotivacional(todos, feitos);
         }, 1500)
@@ -480,13 +489,12 @@ async function progressoBarra(renderizando) {
     };
 };
 
+// #endregion
 
 
 
 
-// MENSAGEM MOTIVACIONAL ----------------------------
-// MENSAGEM MOTIVACIONAL ----------------------------
-// MENSAGEM MOTIVACIONAL ----------------------------
+// #region MENSAGEM MOTIVACIONAL
 
 const msg_motivacional = document.getElementById('msg_motivacional');
 const span = msg_motivacional.querySelector('span');
@@ -570,16 +578,16 @@ function nivelDeMensagem(porcent) {
     else if (porcent <= 100) return 'nivel_4';
 }
 
+// #endregion
 
 
 
 
-// STREAK -----------------------------------------
-// STREAK -----------------------------------------
-// STREAK -----------------------------------------
+// #region STREAK
 
 const streak = document.getElementById('sequencia');
 let streakArray = (JSON.parse(localStorage.getItem('streak_hoje')) ?? [false, false, false, false]);
+// console.log(streakArray);
 
 async function streakVerificacao() {
     let play = false;
@@ -613,6 +621,10 @@ async function streakVerificacao() {
         streak.querySelector('span').textContent = feitos;
         streak.querySelector('span').classList.add('pop');
 
+
+        const posicao_XP = streak.querySelector('h2');
+        spawnXP('streak_hoje', posicao_XP);
+
         setTimer('timeoutStreak', () => {
             tocarSom(sons.fire_end);
             streak.classList.remove('streak');
@@ -621,13 +633,13 @@ async function streakVerificacao() {
     };
 };
 
+// #endregion 
 
 
 
 
 // Inicio automatico
 if (tarefas_array.length > 0) render(tarefas_array);
-
 
 
 

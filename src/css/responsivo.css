@@ -14,29 +14,34 @@
   /* body {
     border: 2px solid red;
   } */
-
   header {
-    gap: 15px;
+    gap: 10px;
+  }
+
+  #hud_box {
+    border: 2px solid initial;
+    padding: 0 5px;
   }
 
   header h1 {
-    font-size: 1.3rem;
-    padding: 5px;
+    font-size: 1.2rem;
+  }
+
+  header p {
+    font-size: 0.9rem;
   }
 
   .center {
     gap: 7px;
+    margin-top: 15px;
   }
 
   #input_container input {
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
 
   #input_container button {
     padding: 5px 10px;
+    font-size: 1rem;
   }
-
-  /* #barra_progresso {
-    margin: 10px 0;
-  } */
 }

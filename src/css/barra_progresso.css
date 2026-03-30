@@ -10,7 +10,7 @@
   border-radius: 5px;
   background-color: white;
   border: 3px solid var(--neon_gold);
-  overflow: hidden;
+  overflow-x: hidden;
   box-shadow: 0 0 10px currentColor;
   transition:
     height 1s ease,

@@ -9,7 +9,6 @@ header {
   display: flex;
   flex-direction: column;
   text-align: center;
-  justify-content: center;
   height: 15dvh;
 }
 
@@ -17,7 +16,7 @@ header {
   border: 3px solid rgba(126, 41, 224, 0.73);
   border-radius: 5px;
   padding: 5px;
-  background: linear-gradient(100deg, #200273ad, #170e78b2);
+  background-color: #200273ad;
 }
 
 header h1 {
@@ -57,6 +56,10 @@ header h1 span:nth-of-type(3) {
   transform: scaleX(0);
   height: 3px;
   background-color: var(--neon_terciario);
+}
+
+#level_info span.pop {
+  animation: pop 0.5s ease;
 }
 
 header p {
