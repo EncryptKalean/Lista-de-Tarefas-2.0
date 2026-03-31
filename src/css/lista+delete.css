@@ -99,7 +99,7 @@ li span,
 }
 
 li input:checked {
-  width: 0;
+  display: none;
 }
 
 li input:checked ~ .checkbox {

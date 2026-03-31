@@ -6,7 +6,6 @@ function unlockAudio() {
         .then(() => {
             audio.pause();
             audio.currentTime = 0;
-            // console.log("Áudio desbloqueado");
         })
         .catch(() => { });
 }
@@ -14,72 +13,6 @@ function unlockAudio() {
 document.addEventListener("click", unlockAudio, { once: true });
 
 // #endregion
-
-
-
-
-// #region SISTEMAS BASICOS
-
-const lista = document.getElementById('tarefas_container');
-const tarefas_container = lista.querySelector('ul');
-
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); };
-
-const timers = {};
-
-function setTimer(nome, fn, tempo) {
-    clearTimeout(timers[nome]);
-    timers[nome] = setTimeout(fn, tempo);
-};
-
-const tarefas_array = (JSON.parse(localStorage.getItem('tarefas_array')) ?? []);
-
-let tarefas_infos = (JSON.parse(localStorage.getItem('tarefas_infos')) ?? {
-    total: 0,
-    dias: 0,
-    hoje: 0,
-    progresso_completo_hoje: false,
-});
-
-let todos = tarefas_array.length;
-let feitos = 0;
-let porcentagem;
-
-const hoje_verificacao = new Date().getDate();
-let ultimo_acesso = localStorage.getItem('ultimo_acesso');
-
-function atualizandoTarefasInfos(alvo) {
-    if (alvo === 'reset') tarefas_infos.hoje = 0;
-    else if (alvo === 'hoje') tarefas_infos.hoje++;
-    else if (alvo === 'total') tarefas_infos.total++;
-    else if (alvo === 'dias') tarefas_infos.dias++;
-    else if (alvo === 'save') localStorage.setItem('tarefas_infos', JSON.stringify(tarefas_infos));
-    else if (alvo === 'ultimo_acesso') {
-        localStorage.setItem('ultimo_acesso', hoje_verificacao);
-        ultimo_acesso = hoje_verificacao;
-    }
-    else if (alvo === 'progresso_hoje') tarefas_infos.progresso_completo_hoje = true;
-
-    console.log('alteração no tarefas_infos: ' + alvo);
-}
-
-if (hoje_verificacao != ultimo_acesso) {
-    localStorage.removeItem('streak_hoje');
-    atualizandoTarefasInfos('reset');
-    console.log('dia diferente');
-};
-
-const footer = document.querySelector('footer');
-const span_hoje = footer.querySelector('span');
-const span_dias = footer.querySelector('#dias span');
-const span_total = footer.querySelector('#total span');
-
-if (tarefas_infos.hoje > 0) {
-    if (footer.classList.contains('nada')) footer.classList.remove('nada');
-    span_hoje.textContent = tarefas_infos.hoje;
-    span_dias.textContent = tarefas_infos.dias;
-    span_total.textContent = tarefas_infos.total;
-}
 
 
 
@@ -96,13 +29,116 @@ navigator.serviceWorker.register("sw.js").then(reg => {
         newWorker.addEventListener("statechange", () => {
             if (newWorker.state === "installed") {
                 if (navigator.serviceWorker.controller) {
-                    console.log("Nova versão!");
                     window.location.reload();
                 }
             }
         });
     });
 });
+
+
+
+
+// #region SISTEMAS BASICOS
+
+const gameState = (JSON.parse(localStorage.getItem('gameState')) ?? {
+    player: {
+        nivel: 0,
+        xp: 0,
+    },
+    tarefas: [],
+    stats: {
+        hoje: 0,
+        total: 0,
+        dias: 0,
+        progresso_completo_hoje: false
+    },
+    streak: [false, false, false, false],
+    ultimo_acesso: '',
+});
+
+function dispatch(acao, item) {
+    console.log('Dispatch: ' + acao);
+
+    switch (acao) {
+        case 'save': return setTimer('save_gameState', () => { localStorage.setItem('gameState', JSON.stringify(gameState)) }, 500);
+        case 'reset_hoje': return gameState.stats.hoje = 0;
+        case 'hoje': return gameState.stats.hoje++;
+        case 'total': return gameState.stats.total++;
+        case 'dias': return gameState.stats.dias++;
+        case 'ultimo_acesso':
+            gameState.ultimo_acesso = hoje_verificacao;
+            dispatch('save');
+            break;
+        case 'progresso_hoje': return gameState.stats.progresso_completo_hoje = true;
+        case 'adicionar_tarefa': return gameState.tarefas.push(item);
+        case 'progresso_barra': return progressoBarra(item);
+        case 'calculo_xp': return calculandoXP(item);
+        case 'reset': return reset();
+        case 'streak': return streakVerificacao();
+        case 'criar_tarefa': return criandoTarefa(item);
+    }
+};
+
+function updateUI(acao, item, valor, delay) {
+    console.log('UpdateUI: ' + acao);
+
+    switch (acao) {
+        case 'render': return render(item, valor);
+        case 'spawn_xp': return spawnXP(item, valor, delay);
+        case 'barra_level_porcentagem': return barraLevelPorcentagem();
+        case 'mensagem_motivacional': return mensagemMotivacional();
+        case 'level_up':
+            level_atual_texto.classList.add('pop');
+
+            setTimer('level_pop', () => {
+                level_atual_texto.classList.remove('pop');
+            }, 500);
+            break;
+    };
+};
+
+
+const lista = document.getElementById('tarefas_container');
+const tarefas_container = lista.querySelector('ul');
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); };
+
+const timers = {};
+
+function setTimer(nome, fn, tempo) {
+    clearTimeout(timers[nome]);
+    timers[nome] = setTimeout(fn, tempo);
+};
+
+function getTodos() {
+    return gameState.tarefas.length;
+};
+
+function getCompletos() {
+    return gameState.tarefas.filter(t => t.feito).length;
+};
+
+let total = getTodos();
+let completos = getCompletos();
+
+let porcentagem = total > 0 ? (completos / total) * 100 : 0;
+
+const hoje_verificacao = new Date().toDateString();
+
+if (hoje_verificacao != gameState.ultimo_acesso) dispatch('reset_hoje');;
+
+const footer = document.querySelector('footer');
+const span_hoje = footer.querySelector('span');
+const span_dias = footer.querySelector('#dias span');
+const span_total = footer.querySelector('#total span');
+
+if (gameState.stats.hoje > 0) {
+    if (footer.classList.contains('nada')) footer.classList.remove('nada');
+    span_hoje.textContent = gameState.stats.hoje;
+    span_dias.textContent = gameState.stats.dias;
+    span_total.textContent = gameState.stats.total;
+}
 
 // #endregion
 
@@ -159,58 +195,68 @@ function tocarSom(src, time) {
 
 
 
-// #region PLAYER & XP
+// #region XP
 
 const level_container = document.querySelector('#level_info');
 const level_atual_texto = level_container.querySelector('span');
 const level_proximo_texto = level_container.querySelector('#level_proximo');
 const barra_level = level_container.querySelector('#barra_level');
 
-let player = (JSON.parse(localStorage.getItem('player_infos')) ?? { nivel: 0, xp: 0, });
-
-function xpNecessario() { return player.nivel * 100 };
+function xpNecessario() { return (gameState.player.nivel + 1) * 100 };
 
 function calculandoXP(origem_xp) {
-    const valor = balanceamentoXP[origem_xp];
-    console.log('+' + valor + ' xp ' + origem_xp);
-    player.xp += valor;
+    const valor = balanceamentoXP(origem_xp);
+    gameState.player.xp += valor;
 
-    if (player.xp >= xpNecessario()) {
-        player.xp -= xpNecessario();
-        player.nivel++;
-        level_atual_texto.classList.add('pop');
-        setTimer('level_pop', () => {
-            level_atual_texto.classList.remove('pop');
-        }, 500)
+    if (gameState.player.xp >= xpNecessario()) {
+        gameState.player.xp -= xpNecessario();
+        gameState.player.nivel++;
+
+        updateUI('level_up');
     };
 
-    localStorage.setItem('player_infos', JSON.stringify(player));
+    dispatch('save');
 
-    barraLevelPorcentagem();
+    updateUI('barra_level_porcentagem')
 };
 
 function barraLevelPorcentagem() {
-    level_atual_texto.textContent = player.nivel;
-    level_proximo_texto.textContent = player.nivel + 1;
+    level_atual_texto.textContent = gameState.player.nivel;
+    level_proximo_texto.textContent = gameState.player.nivel + 1;
 
-    const level_porcentagem = ((player.xp / xpNecessario()) * 100) / 100;
+    const level_porcentagem = Math.min(gameState.player.xp / xpNecessario(), 1);
 
     barra_level.style.transform = `scaleX(${level_porcentagem})`;
 };
 barraLevelPorcentagem();
 
-const balanceamentoXP = {
-    check: 10,
-    progresso: 5,
-    progresso_completo: 10,
-    streak_hoje: 3,
-    // streak_de_dias:,
-};
+function xpPorTarefa() {
+    const quantidade = gameState.stats.hoje;
+    let xp = 0;
+
+    if (quantidade < 5) xp = 10;
+    else if (quantidade < 10) xp = 7;
+    else if (quantidade < 20) xp = 5;
+    else xp = 3;
+
+    return xp;
+}
+
+function balanceamentoXP(origem) {
+    switch (origem) {
+        case 'check': return xpPorTarefa();
+        case 'progresso': return 5;
+        case 'progresso_completo': return 15;
+        case 'streak_hoje': return Math.min(gameState.stats.dias * 2, 20);
+        default: return 0;
+    }
+}
 
 function spawnXP(origemXP, posicao, delay) {
-    if (!delay) delay = 500;
+    if (!delay) delay = 300;
+
     const p = document.createElement('p');
-    p.textContent = `+${balanceamentoXP[origemXP]} XP`;
+    p.textContent = `+${balanceamentoXP(origemXP)} XP`;
     p.classList.add('xp_texto');
 
     setTimeout(() => {
@@ -250,11 +296,11 @@ function add() {
 
     if (campo_digitacao.classList.contains('erro')) campo_digitacao.classList.remove('erro');
 
-    criandoTarefa(texto);
+    dispatch('criar_tarefa', texto);
 
     campo_digitacao.value = '';
 
-    if (ultimo_acesso != hoje_verificacao) atualizandoTarefasInfos('ultimo_acesso');
+    if (gameState.ultimo_acesso != hoje_verificacao) dispatch('ultimo_acesso');
 }
 
 function criandoTarefa(tarefa) {
@@ -262,21 +308,18 @@ function criandoTarefa(tarefa) {
     const criando = ({
         titulo: tarefa,
         feito: false,
-        id: Date.now() + Math.random()
+        id: crypto.randomUUID()
     });
 
-    render(criando, true);
+    updateUI('render', criando, true);
 
-    tarefas_array.push(criando);
-
-    setTimer('save', () => {
-        localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
-    }, 500);
+    dispatch('adicionar_tarefa', criando);
 
     tocarSom(sons.lapis);
-    todos++;
+    total++;
 
-    progressoBarra(true);
+    dispatch('progresso_barra', true);
+    dispatch('save');
 };
 
 function render(tarefa, novo) {
@@ -286,7 +329,7 @@ function render(tarefa, novo) {
     // Separa os itens salvos para serem renderizados separadamente
     if (tarefa.length > 1) {
         const feitos_verificacao = tarefa.filter(el => el.feito == true);
-        feitos = feitos_verificacao.length;
+        completos = feitos_verificacao.length;
 
         tarefa.forEach((el) => {
             ren(el);
@@ -335,7 +378,7 @@ function render(tarefa, novo) {
 
     if (novo) { requestAnimationFrame(() => { novosItens.forEach(li => { li.classList.remove('recem_criado'); }); }); };
 
-    if (todos > 0 && !lista.classList.contains('pronto')) lista.classList.add('pronto');
+    if (total > 0 && !lista.classList.contains('pronto')) lista.classList.add('pronto');
 
     if (apagar_tudo_btn.classList.contains('escondido')) apagar_tudo_btn.classList.remove('escondido');
 };
@@ -346,28 +389,27 @@ lista.addEventListener('change', (click) => {
 
     const id = click.target.closest('li').id;
 
-    tarefas_array.find(el => el.id == id).feito = true;
+    gameState.tarefas.find(el => el.id == id).feito = true;
 
     tocarSom(sons.check);
 
-    feitos++;
-    atualizandoTarefasInfos('hoje');
-    atualizandoTarefasInfos('total');
+    completos++;
+    dispatch('hoje');
+    dispatch('total');
 
     const posicao_XP = click.target.closest('li').querySelector('.coin');
-    spawnXP('check', posicao_XP);
+    updateUI('spawn_xp', 'check', posicao_XP);
 
-    span_hoje.textContent = tarefas_infos.hoje;
+    span_hoje.textContent = gameState.stats.hoje;
 
     setTimer('save', () => {
-        localStorage.setItem('tarefas_array', JSON.stringify(tarefas_array));
-        atualizandoTarefasInfos('save');
-        progressoBarra();
+        dispatch('save');
+        dispatch('progresso_barra');
     }, 500);
 
-    calculandoXP('check');
+    dispatch('calculo_xp', 'check')
 
-    if (ultimo_acesso != hoje_verificacao) atualizandoTarefasInfos('ultimo_acesso');
+    if (gameState.ultimo_acesso != hoje_verificacao) dispatch('ultimo_acesso');
 });
 
 apagar_tudo_btn.addEventListener('click', () => { apagar_tudo_alerta.classList.add('aberto'); });
@@ -379,15 +421,13 @@ apagar_tudo_alerta.addEventListener('click', (click) => {
 
     const btn = target.id;
 
-    if (btn === "confirmar") reset();
+    if (btn === "confirmar") dispatch('reset');
 
     apagar_tudo_alerta.classList.remove('aberto');
 });
 
 function reset() {
-    tarefas_array.length = 0;
-
-    localStorage.removeItem('tarefas_array');
+    gameState.tarefas.length = 0;
 
     tarefas_container.innerHTML = '';
 
@@ -399,16 +439,18 @@ function reset() {
 
     barra_progresso.classList.remove('idle');
 
-    streakArray = [false, false, false, false];
+    gameState.streak = [false, false, false, false];
 
     span.textContent = 0;
 
-    feitos = 0;
-    todos = 0;
+    completos = 0;
+    total = 0;
 
     lista.classList.remove('pronto');
 
     apagar_tudo_btn.classList.add('escondido');
+
+    dispatch('save');
 }
 
 // #endregion
@@ -425,7 +467,7 @@ const cores_progresso = ["#ff3b3b", "#ff7a00", "#ffe600", "#00ff9f", "#00e0ff"]
 
 async function progressoBarra(renderizando) {
 
-    porcentagem = (feitos / todos) * 100;
+    porcentagem = (total > 0 ? (completos / total) * 100 : 0);
 
     let background = ``;
 
@@ -442,13 +484,13 @@ async function progressoBarra(renderizando) {
                     tocarSom(sons.completo)
                 }, 500)
 
-                if (!tarefas_infos.progresso_completo_hoje) {
-                    calculandoXP('progresso_completo');
-                    spawnXP('progresso_completo', barra_progresso, 1000);
+                if (!gameState.stats.progresso_completo_hoje) {
+                    dispatch('calculo_xp', 'progresso_completo');
+                    updateUI('spawn_xp', 'progresso_completo', barra_progresso, 1000);
 
-                    atualizandoTarefasInfos('progresso_hoje');
-                    atualizandoTarefasInfos('dias');
-                    atualizandoTarefasInfos('save');
+                    dispatch('progresso_hoje');
+                    dispatch('dias');
+                    dispatch('save');
                 };
 
             };
@@ -465,9 +507,13 @@ async function progressoBarra(renderizando) {
         else if (porcentagem >= 5 && i == 0) {
             background += cores_progresso[0];
 
-            if (!renderizando) calculandoXP('progresso');
+            if (!renderizando) dispatch('calculo_xp', 'progresso');
         }
-        else if (porcentagem >= (i + 1) * 20) background += `, ${cores_progresso[i]}`;
+        else if (porcentagem >= (i + 1) * 20) {
+            background += `, ${cores_progresso[i]}`;
+
+            if (!renderizando && !gameState.stats.progresso_completo_hoje) updateUI('spawn_xp', 'progresso', barra_progresso, 1000);
+        };
     };
 
     barra_progresso.style.background = `linear-gradient(90deg, ${background})`;
@@ -477,15 +523,10 @@ async function progressoBarra(renderizando) {
 
         tocarSom(sons.progress, 0.4);
 
-        spawnXP('progresso', barra_progresso, 1000);
 
-        setTimer('msgMotivacional', () => {
-            mensagemMotivacional(todos, feitos);
-        }, 1500)
+        setTimer('msgMotivacional', () => { updateUI('mensagem_motivacional'); }, 1500)
 
-        setTimer('timeoutProgresso', () => {
-            barra_progresso.classList.remove('ativo');
-        }, 2500);
+        setTimer('timeoutProgresso', () => { barra_progresso.classList.remove('ativo'); }, 2500);
     };
 };
 
@@ -497,6 +538,8 @@ async function progressoBarra(renderizando) {
 // #region MENSAGEM MOTIVACIONAL
 
 const msg_motivacional = document.getElementById('msg_motivacional');
+const svg = msg_motivacional.querySelector('svg');
+const use = svg.querySelector('use');
 const span = msg_motivacional.querySelector('span');
 const linha_msg_motivacional = document.getElementById('separacao_mensagem_motivacional');
 const array_msg_motivacionais = {
@@ -548,12 +591,13 @@ function mensagemMotivacional() {
     // SVGs
     if (aleatorizado === 0) {
         // SVG do Fogo
-        if (calculando_nivel === 'nivel_2') span.innerHTML += '<svg><use href="#icon_fogo" /></svg>';
+        if (calculando_nivel === 'nivel_2') use.setAttribute('href', '#icon_fogo');
         // SVG do Foguete
-        else if (calculando_nivel === 'nivel_3') span.innerHTML += '<svg><use href="#icon_foguete" /></svg>';
+        else if (calculando_nivel === 'nivel_3') use.setAttribute('href', '#icon_foguete');
         // SVG do Correct
-        else if (calculando_nivel === 'nivel_4') span.innerHTML += '<svg><use href="#icon_correct" /></svg>';
+        else if (calculando_nivel === 'nivel_4') use.setAttribute('href', '#icon_correct');
     }
+    else use.setAttribute('href', '');
 
     msg_motivacional.classList.add('aberto');
     linha_msg_motivacional.classList.add('aberto');
@@ -564,9 +608,7 @@ function mensagemMotivacional() {
         })
     }, 4000);
 
-    setTimer('streakVerificacao', () => {
-        streakVerificacao();
-    }, 2000);
+    setTimer('streakVerificacao', () => { dispatch('streak') }, 2000);
 }
 
 function nivelDeMensagem(porcent) {
@@ -586,26 +628,19 @@ function nivelDeMensagem(porcent) {
 // #region STREAK
 
 const streak = document.getElementById('sequencia');
-let streakArray = (JSON.parse(localStorage.getItem('streak_hoje')) ?? [false, false, false, false]);
-// console.log(streakArray);
 
 async function streakVerificacao() {
     let play = false;
 
-    for (let i = 1; i < streakArray.length; i++) {
+    for (let i = 1; i < gameState.streak.length; i++) {
         const porcentagemAlvo = i * 19;
-        if (porcentagem >= porcentagemAlvo && streakArray[(i - 1)] == false) {
-            streakArray[(i - 1)] = true;
+        if (porcentagem >= porcentagemAlvo && !gameState.streak[i - 1]) {
+            gameState.streak[i - 1] = true;
             play = true;
-            console.log('----------');
-            console.log(streakArray);
-            console.log(porcentagem);
-            console.log(i);
-            console.log(porcentagemAlvo);
 
-            calculandoXP('streak_hoje');
+            dispatch('calculo_xp', 'streak_hoje')
 
-            localStorage.setItem('streak_hoje', JSON.stringify(streakArray));
+            dispatch('save')
 
             break
         }
@@ -618,12 +653,12 @@ async function streakVerificacao() {
 
         await delay(700);
 
-        streak.querySelector('span').textContent = feitos;
+        streak.querySelector('span').textContent = completos;
         streak.querySelector('span').classList.add('pop');
 
 
         const posicao_XP = streak.querySelector('h2');
-        spawnXP('streak_hoje', posicao_XP);
+        updateUI('spawn_xp', 'streak_hoje', posicao_XP)
 
         setTimer('timeoutStreak', () => {
             tocarSom(sons.fire_end);
@@ -639,7 +674,7 @@ async function streakVerificacao() {
 
 
 // Inicio automatico
-if (tarefas_array.length > 0) render(tarefas_array);
+if (gameState.tarefas.length > 0) updateUI('render', gameState.tarefas);
 
 
 
@@ -650,10 +685,9 @@ if (tarefas_array.length > 0) render(tarefas_array);
     - CONFETES
     - STREAK DIARIO
     - TOTAL DE TAREFAS COMPLETADAS AO TODO
+    - SISTEMA DE NIVEL
 
 */
 
-// VARIAÇÃO DE SONS
 // ----------------- GAME -------------------------
-// SISTEMA DE NIVEL + RECOMPENSA (EX: NOVAS CORES, SONS, EFEITOS)
-// SISTEMA DE DESAFIOS
+// RECOMPENSA (EX: NOVAS CORES, SONS, EFEITOS)
