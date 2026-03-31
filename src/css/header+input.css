@@ -9,7 +9,8 @@ header {
   display: flex;
   flex-direction: column;
   text-align: center;
-  height: 15dvh;
+  justify-content: center;
+  min-height: 15dvh;
 }
 
 #hud_box {
@@ -74,12 +75,9 @@ header p {
 .center {
   width: 100%;
   max-width: 900px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 15px;
+  margin: 0 auto;
+  margin-top: 25px;
+  text-align: right;
 }
 
 #input_container {

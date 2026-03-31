@@ -14,6 +14,7 @@
   /* body {
     border: 2px solid red;
   } */
+
   header {
     gap: 10px;
   }
@@ -31,9 +32,8 @@
     font-size: 0.9rem;
   }
 
-  .center {
-    gap: 7px;
-    margin-top: 15px;
+  header > .linha {
+    display: none;
   }
 
   #input_container input {
@@ -43,5 +43,16 @@
   #input_container button {
     padding: 5px 10px;
     font-size: 1rem;
+  }
+}
+
+@media (height < 45rem) {
+  /* body {
+    border: 2px solid red;
+  } */
+
+  header > p,
+  header > .linha {
+    display: none;
   }
 }
