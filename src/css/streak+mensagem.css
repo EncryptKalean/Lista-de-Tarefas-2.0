@@ -70,30 +70,34 @@
 #msg_motivacional {
   height: 0;
   overflow: hidden;
-  font-size: 1.5rem;
+  width: 100%;
+  font-size: 1.4rem;
   font-weight: bold;
   color: var(--neon_gold);
-  align-content: start;
   transition:
     padding 0.5s,
     margin 1s;
+  text-align: center;
+  align-self: center;
+  position: relative;
 }
 
 #msg_motivacional.aberto {
-  padding: 1.5dvh 0 3dvh 0;
+  padding: 5px 0 3dvh 0;
   margin: 1dvh 0;
 }
 
 #msg_motivacional > span {
-  position: relative;
+  width: 100%;
   text-shadow: 0 0 15px currentColor;
 }
 
 #msg_motivacional svg {
+  display: block;
   position: absolute;
   height: 30px;
-  margin-left: 10px;
-  top: -50%;
+  top: 0;
+  right: 5%;
 }
 
 #separacao_mensagem_motivacional {
