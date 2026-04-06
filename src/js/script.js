@@ -66,7 +66,7 @@ function dispatch(acao, item, valor) {
     console.log('Dispatch: ' + acao);
 
     switch (acao) {
-        // case 'save': return setTimer('save_gameState', () => { localStorage.setItem('gameState', JSON.stringify(gameState)) }, 500);
+        case 'save': return setTimer('save_gameState', () => { localStorage.setItem('gameState', JSON.stringify(gameState)) }, 500);
         case 'reset_hoje':
             gameState.stats.hoje = 0;
             gameState.moedas_ganhas_hoje = 0;
