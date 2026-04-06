@@ -4,11 +4,14 @@
 
 #sequencia {
   position: absolute;
+  place-self: center;
   bottom: 5%;
-  width: 102vw;
+  width: 100vw;
+  border: 3px solid var(--neon_primario);
+  border-right: none;
+  border-left: none;
   justify-items: center;
   z-index: 1;
-  border: 3px solid var(--neon_primario);
   background:
     linear-gradient(
         rgba(0, 0, 0, 0.5),
@@ -19,7 +22,7 @@
       no-repeat,
     url("../imagens/background_pixelado.webp") no-repeat top / cover;
   padding: 15px 5px;
-  transform: translateX(-100%);
+  transform: scale(0);
   opacity: 0;
   transition:
     opacity 0.5s,
@@ -35,7 +38,7 @@
 }
 
 #sequencia.streak {
-  transform: translateX(0);
+  transform: scale(1);
   opacity: 1;
   /* animation: pop 0.5s ease; */
 }

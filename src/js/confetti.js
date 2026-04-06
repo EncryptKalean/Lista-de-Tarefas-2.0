@@ -5,8 +5,8 @@ const ctx = canvas.getContext("2d");
 
 let W, H;
 function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+    W = getComputedStyle(canvas).height;
+    H = getComputedStyle(canvas).width;
 }
 window.addEventListener("resize", resize);
 resize();

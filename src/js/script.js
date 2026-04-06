@@ -55,14 +55,22 @@ const gameState = (JSON.parse(localStorage.getItem('gameState')) ?? {
     },
     streak: [false, false, false, false],
     ultimo_acesso: '',
+    moedas: 0,
+    moedas_ganhas_hoje: 0,
+    itens: {
+        // neon_pulse: true
+    },
 });
 
-function dispatch(acao, item) {
+function dispatch(acao, item, valor) {
     console.log('Dispatch: ' + acao);
 
     switch (acao) {
-        case 'save': return setTimer('save_gameState', () => { localStorage.setItem('gameState', JSON.stringify(gameState)) }, 500);
-        case 'reset_hoje': return gameState.stats.hoje = 0;
+        // case 'save': return setTimer('save_gameState', () => { localStorage.setItem('gameState', JSON.stringify(gameState)) }, 500);
+        case 'reset_hoje':
+            gameState.stats.hoje = 0;
+            gameState.moedas_ganhas_hoje = 0;
+            break
         case 'hoje': return gameState.stats.hoje++;
         case 'total': return gameState.stats.total++;
         case 'dias': return gameState.stats.dias++;
@@ -74,9 +82,11 @@ function dispatch(acao, item) {
         case 'adicionar_tarefa': return gameState.tarefas.push(item);
         case 'progresso_barra': return progressoBarra(item);
         case 'calculo_xp': return calculandoXP(item);
+        case 'moeda': return moedasSistema(item, valor);
         case 'reset': return reset();
         case 'streak': return streakVerificacao();
         case 'criar_tarefa': return criandoTarefa(item);
+        case 'comprar_item': return comprarItem(item);
     }
 };
 
@@ -95,9 +105,12 @@ function updateUI(acao, item, valor, delay) {
                 level_atual_texto.classList.remove('pop');
             }, 500);
             break;
+        case 'troca_categoria': return trocaCategoria(item);
+        case 'moeda': return moeda_show();
     };
 };
 
+const limite_moedas = 60;
 
 const lista = document.getElementById('tarefas_container');
 const tarefas_container = lista.querySelector('ul');
@@ -121,7 +134,6 @@ function getCompletos() {
 
 let total = getTodos();
 let completos = getCompletos();
-
 let porcentagem = total > 0 ? (completos / total) * 100 : 0;
 
 const hoje_verificacao = new Date().toDateString();
@@ -213,6 +225,7 @@ function calculandoXP(origem_xp) {
         gameState.player.nivel++;
 
         updateUI('level_up');
+        dispatch('moeda', 'level_up');
     };
 
     dispatch('save');
@@ -244,7 +257,7 @@ function xpPorTarefa() {
 
 function balanceamentoXP(origem) {
     switch (origem) {
-        case 'check': return xpPorTarefa();
+        case 'tarefa': return xpPorTarefa();
         case 'progresso': return 5;
         case 'progresso_completo': return 15;
         case 'streak_hoje': return Math.min(gameState.stats.dias * 2, 20);
@@ -253,7 +266,7 @@ function balanceamentoXP(origem) {
 }
 
 function spawnXP(origemXP, posicao, delay) {
-    if (!delay) delay = 300;
+    if (!delay) delay = 400;
 
     const p = document.createElement('p');
     p.textContent = `+${balanceamentoXP(origemXP)} XP`;
@@ -268,6 +281,182 @@ function spawnXP(origemXP, posicao, delay) {
         }, 2000)
     }, delay)
 }
+
+// #endregion
+
+
+
+
+// #region MOEDAS
+
+function moedaPorTarefa() {
+    const quantidade = gameState.stats.hoje;
+
+    if (quantidade < 5) return 3;
+    else if (quantidade < 10) return 2;
+    else return 0
+};
+
+function balanceamentoMoedas(origem) {
+    switch (origem) {
+        case 'tarefa': return moedaPorTarefa();
+        case 'progresso_completo': return 10;
+        case 'level_up': return 15;
+        default: return 0;
+    };
+};
+
+function moedasSistema(origem, compra) {
+
+    if (origem === 'compra') {
+        gameState.moedas -= compra;
+        dispatch('save');
+    }
+    else if (gameState.moedas_ganhas_hoje < limite_moedas) {
+        gameState.moedas += balanceamentoMoedas(origem);
+        gameState.moedas_ganhas_hoje++;
+
+        updateUI('moeda');
+    }
+};
+
+// #endregion
+
+
+
+
+// #region LOJA
+
+const LOJA_ITENS = [
+    {
+        id: 'neon_pulse',
+        nome: 'neon_pulse',
+        categoria: 'efeitos',
+        tipo_efeito: 'check',
+        preco: 500,
+        nivel: 1,
+        comprado: false,
+        equipado: false,
+        imagem: '',
+    },
+];
+
+const loja = document.getElementById('loja');
+const loja_frame = loja.querySelector('#loja_frame');
+const loja_abas_array = loja_frame.querySelectorAll('.loja_aba');
+const moeda_span = document.querySelector('#moedas_show span');
+
+function renderLoja(id, itens) {
+    const categoria = loja_frame.querySelector(`#${id}`);
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < itens.length; i++) {
+        const item = itens[i];
+
+        const card = document.createElement('div');
+        card.classList.add('card');
+        if (gameState.itens[item.id]) card.classList.add('comprado');
+        if (gameState.player.nivel >= item.nivel) card.classList.add('liberado');
+        card.setAttribute('nivel', item.nivel);
+        card.setAttribute('id', item.id);
+
+        const img = document.createElement('img');
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('src', item.imagem);
+
+        const textos_div = document.createElement('div');
+        textos_div.classList.add('textos');
+
+        const h3 = document.createElement('h3');
+        h3.classList.add('item_nome');
+        h3.textContent = item.nome;
+
+        const item_tipo = document.createElement('p');
+        item_tipo.classList.add('item_tipo');
+        item_tipo.textContent = 'efeito de ' + item.tipo_efeito;
+
+        const item_nivel = document.createElement('p');
+        item_nivel.classList.add('item_nivel');
+        item_nivel.textContent = 'nivel ' + item.nivel;
+
+        const comprar_container = document.createElement('div');
+        comprar_container.classList.add('comprar_container');
+
+        const preco_div = document.createElement('div');
+        preco_div.classList.add('preco');
+
+        const span = document.createElement('span');
+        span.textContent = item.preco;
+
+        const button = document.createElement('button');
+        button.setAttribute('preco', item.preco);
+
+        card.append(img);
+
+        textos_div.append(h3);
+        textos_div.append(item_tipo);
+        textos_div.append(item_nivel);
+
+        card.append(textos_div);
+
+        preco_div.innerHTML += '<svg><use href="#icon_coin"/></svg>';
+        preco_div.append(span);
+
+        comprar_container.append(preco_div);
+        comprar_container.append(button);
+
+        card.append(comprar_container);
+
+        fragment.append(card);
+    }
+
+    categoria.append(fragment);
+};
+
+function filtrandoItens(aba) {
+    const categoria = aba.id;
+    const itens = LOJA_ITENS.filter(el => el.categoria === categoria);
+
+    renderLoja(categoria, itens);
+};
+
+loja_abas_array.forEach((aba) => { filtrandoItens(aba) });
+
+function trocaCategoria(target) {
+    const categoria_antiga = loja.querySelectorAll('.aberto');
+
+    categoria_antiga.forEach(el => el.classList.remove('aberto'));
+
+    const categoria_nova = loja.querySelector(`#categorias [data-categoria="${target}"]`);
+    categoria_nova.classList.add('aberto');
+
+    const aba_nova = loja_frame.querySelector(`#${target}`);
+    aba_nova.classList.add('aberto');
+};
+
+function comprarItem(card) {
+    const btn = card.querySelector('button');
+    const preco = btn.getAttribute('preco');
+    const item = LOJA_ITENS.find(el => el.id === card.id);
+
+    if (gameState.moedas >= preco) {
+        dispatch('moedas', 'compra', preco);
+        gameState.itens[item.id] = true;
+    }
+};
+
+function moeda_show() {
+    moeda_span.textContent = gameState.moedas;
+};
+
+loja.addEventListener('click', (click) => {
+    const categoria = click.target.closest('#categorias span');
+    const item = click.target.closest('.comprar_container button');
+
+    if (!categoria && !item) return;
+    else if (categoria) updateUI('troca_categoria', categoria.dataset.categoria);
+    else if (item) dispatch('comprar_item', item.closest('.card'));
+});
 
 // #endregion
 
@@ -396,9 +585,10 @@ lista.addEventListener('change', (click) => {
     completos++;
     dispatch('hoje');
     dispatch('total');
+    dispatch('moeda', 'tarefa');
 
     const posicao_XP = click.target.closest('li').querySelector('.coin');
-    updateUI('spawn_xp', 'check', posicao_XP);
+    updateUI('spawn_xp', 'tarefa', posicao_XP);
 
     span_hoje.textContent = gameState.stats.hoje;
 
@@ -407,7 +597,7 @@ lista.addEventListener('change', (click) => {
         dispatch('progresso_barra');
     }, 500);
 
-    dispatch('calculo_xp', 'check')
+    dispatch('calculo_xp', 'tarefa')
 
     if (gameState.ultimo_acesso != hoje_verificacao) dispatch('ultimo_acesso');
 });
@@ -487,6 +677,8 @@ async function progressoBarra(renderizando) {
                 if (!gameState.stats.progresso_completo_hoje) {
                     dispatch('calculo_xp', 'progresso_completo');
                     updateUI('spawn_xp', 'progresso_completo', barra_progresso, 1000);
+
+                    dispatch('moeda', 'progresso_completo');
 
                     dispatch('progresso_hoje');
                     dispatch('dias');
@@ -676,7 +868,7 @@ async function streakVerificacao() {
 // Inicio automatico
 if (gameState.tarefas.length > 0) updateUI('render', gameState.tarefas);
 
-
+if (gameState.moedas > 0) updateUI('moeda');
 
 
 /*

@@ -35,30 +35,20 @@ html {
   scroll-behavior: smooth;
   font-size: 62.5%;
   color: var(--texto_primario);
-  /* background: radial-gradient(circle at top, #0b0f1a, #05070d 70%); */
 }
 
 html,
 body {
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
 }
 
 body {
-  /* background:
-    linear-gradient(120deg, rgba(168, 85, 247, 0.15), transparent 40%),
-    linear-gradient(300deg, rgba(0, 255, 156, 0.1), transparent 40%); */
   padding: 2% 3%;
   padding-top: 0;
-  background:
-    /* linear-gradient(
-        rgba(0, 0, 0, 0),
-        transparent,
-        transparent,
-        rgba(0, 0, 0, 0)
-      )
-      no-repeat, */ url("../imagens/background_pixelado.webp")
-    no-repeat center / cover;
+  background: url("../imagens/background_pixelado.webp") no-repeat center /
+    cover;
+    position: relative;
 }
 
 h1,
@@ -89,7 +79,7 @@ svg {
 
 footer {
   display: flex;
-  position: fixed;
+  position: absolute;
   bottom: 10px;
   left: -2%;
   width: 104%;
@@ -139,8 +129,10 @@ footer #total p {
 /* CANVAS -------------------------------------------------------- */
 
 canvas {
-  position: fixed;
+  position: absolute;
+  pointer-events: none;
   top: 0;
   left: 0;
-  pointer-events: none;
+  height: 100%;
+  width: 100%;
 }

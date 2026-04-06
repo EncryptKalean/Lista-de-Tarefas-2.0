@@ -1,0 +1,198 @@
+#loja_container {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+  justify-items: right;
+  transition: transform 0.5s ease-out;
+  transform: translateX(100%);
+}
+
+#loja_container.aberto {
+  transform: translateX(0);
+}
+
+#loja {
+  position: relative;
+  width: 80%;
+  max-width: 500px;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(35, 10, 60, 0.9), rgba(10, 5, 20, 1));
+  border-left: 2px solid color-mix(in srgb, var(--neon_primario) 60%, black);
+  padding: 10px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#loja h2 {
+  color: var(--neon_primario);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--neon_primario) 30%, transparent);
+  margin-bottom: 20px;
+}
+
+#moedas_show {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#moedas_show svg {
+  height: 25px;
+  color: var(--neon_gold);
+}
+
+#categorias {
+  display: flex;
+  justify-content: space-around;
+  height: 30px;
+  border-bottom: 2px solid
+    color-mix(in srgb, var(--neon_primario) 30%, transparent);
+}
+
+#categorias span {
+  letter-spacing: 1px;
+  align-content: center;
+  height: 100%;
+  padding: 0 10px;
+  border-radius: 3px;
+  background-color: transparent;
+  border: 2px solid transparent;
+  border-bottom: none;
+  transition:
+    border-color 0.3s,
+    background-color 0.3s;
+}
+
+#categorias span.aberto,
+.comprar_container button {
+  border-color: color-mix(
+    in srgb,
+    var(--neon_primario) 50%,
+    transparent
+  ) !important;
+  background-color: color-mix(in srgb, var(--neon_secundario) 10%, transparent);
+}
+
+#loja_frame {
+  margin-top: 5%;
+  width: 100%;
+  max-height: 80dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.loja_aba {
+  display: flex;
+  flex-direction: column;
+  transform-origin: top;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  transform: scaleY(0);
+  transition: transform 0.3s;
+  order: 0;
+}
+
+.loja_aba.aberto {
+  transform: scaleY(1);
+  order: -1;
+}
+
+.card {
+  display: flex;
+  overflow: hidden;
+  padding: 10px 2px;
+  border: 1px solid var(--neon_primario);
+  border-radius: 5px;
+  gap: 3%;
+  opacity: 0.5;
+}
+
+.liberado {
+  opacity: 1;
+}
+
+.card.comprado {
+  opacity: 0.7;
+}
+
+.card.comprado .preco {
+  display: none;
+}
+
+.card.comprado button::before {
+  content: "equipar";
+}
+
+.card > div {
+  align-content: center;
+}
+
+.card img {
+  width: 50px;
+  aspect-ratio: 1;
+  border: 1px solid white;
+  border-radius: 10px;
+}
+
+.card .textos {
+  text-align: left;
+}
+
+.item_nome {
+  font-size: 1rem;
+}
+
+.item_nome,
+.card p {
+  line-height: 15px;
+}
+
+.card p {
+  font-size: 0.8rem;
+  color: rgb(146, 146, 146);
+}
+
+.item_tipo {
+  margin: 5% 0;
+}
+
+.liberado .item_nivel {
+  display: none;
+}
+
+.comprar_container {
+  width: 100%;
+  max-width: 25%;
+  justify-items: center;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.comprar_container .preco {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.preco svg {
+  height: 17px;
+  color: var(--neon_gold);
+}
+
+.comprar_container button {
+  font-size: 0.9rem;
+  padding: 10px 5px;
+  border-radius: 5px;
+  border: 2px solid;
+  text-transform: uppercase;
+}
+
+.comprar_container button::before {
+  content: "comprar";
+}
