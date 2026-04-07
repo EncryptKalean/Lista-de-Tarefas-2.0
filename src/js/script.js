@@ -257,11 +257,11 @@ function xpNecessario() { return (gameState.player.nivel + 1) * 100 };
 function sistemaXP(origem_xp) {
     const valor = balanceamentoXP(origem_xp);
     gameState.player.xp += valor;
-    const xpNecessario = xpNecessario();
+    const xp_necessario = xpNecessario();
 
-    if (gameState.player.xp >= xpNecessario) {
+    if (gameState.player.xp >= xp_necessario) {
         setTimeout(() => {
-            gameState.player.xp -= xpNecessario;
+            gameState.player.xp -= xp_necessario;
             gameState.player.nivel++;
 
             updateUI('levelUP');
