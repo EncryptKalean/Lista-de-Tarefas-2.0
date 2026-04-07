@@ -1,3 +1,33 @@
+// #region TELA SECRETA
+
+const h1 = document.querySelector('h1 span');
+const tela_secreta = document.getElementById('tela_secreta');
+
+function telaSecreta() { tela_secreta.classList.toggle('aberto'); }
+
+function reset() {
+    localStorage.removeItem('gameState');
+    window.location.reload();
+}
+
+let lastTap = 0;
+
+h1.addEventListener('touchend', (tap) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+
+    if (tapLength < 300 && tapLength > 0) {
+        tap.preventDefault();
+        telaSecreta();
+    }
+
+    lastTap = currentTime;
+});
+
+// #endregion 
+
+
+
 // #region Ativador da permissão de audio no mobile
 const audio = new Audio("src/audios/check.ogg");
 
@@ -13,6 +43,7 @@ function unlockAudio() {
 document.addEventListener("click", unlockAudio, { once: true });
 
 // #endregion
+
 
 
 
@@ -921,33 +952,3 @@ if (gameState.moedas > 0) updateUI('moeda');
 
 // ----------------- GAME -------------------------
 // RECOMPENSA (EX: NOVAS CORES, SONS, EFEITOS)
-
-
-
-// #region TELA SECRETA
-
-const h1 = document.querySelector('h1 span');
-const tela_secreta = document.getElementById('tela_secreta');
-
-function telaSecreta() { tela_secreta.classList.toggle('aberto'); }
-
-function reset() {
-    localStorage.removeItem('gameState');
-    window.location.reload();
-}
-
-let lastTap = 0;
-
-h1.addEventListener('touchend', (tap) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-
-    if (tapLength < 300 && tapLength > 0) {
-        tap.preventDefault();
-        telaSecreta();
-    }
-
-    lastTap = currentTime;
-});
-
-// #endregion 
