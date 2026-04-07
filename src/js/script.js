@@ -34,7 +34,7 @@ navigator.serviceWorker.register("sw.js").then(reg => {
             }
         });
     });
-});
+}, { once: true });
 
 
 
@@ -57,9 +57,7 @@ const gameState = (JSON.parse(localStorage.getItem('gameState')) ?? {
     ultimo_acesso: '',
     moedas: 0,
     moedas_ganhas_hoje: 0,
-    itens: {
-        // neon_pulse: true
-    },
+    itens: {},
 });
 
 function dispatch(acao, item, valor) {
@@ -81,7 +79,7 @@ function dispatch(acao, item, valor) {
         case 'progresso_hoje': return gameState.stats.progresso_completo_hoje = true;
         case 'adicionar_tarefa': return gameState.tarefas.push(item);
         case 'progresso_barra': return progressoBarra(item);
-        case 'calculo_xp': return calculandoXP(item);
+        case 'XP': return sistemaXP(item);
         case 'moeda': return moedasSistema(item, valor);
         case 'reset': return reset();
         case 'streak': return streakVerificacao();
@@ -95,20 +93,29 @@ function updateUI(acao, item, valor, delay) {
 
     switch (acao) {
         case 'render': return render(item, valor);
-        case 'spawn_xp': return spawnXP(item, valor, delay);
+        case 'XP': return spawnXP(item, valor, delay);
         case 'barra_level_porcentagem': return barraLevelPorcentagem();
         case 'mensagem_motivacional': return mensagemMotivacional();
-        case 'level_up':
+        case 'levelUP':
             level_atual_texto.classList.add('pop');
 
             setTimer('level_pop', () => {
                 level_atual_texto.classList.remove('pop');
             }, 500);
             break;
-        case 'troca_categoria': return trocaCategoria(item);
+        case 'categoria': return trocaCategoria(item);
         case 'moeda': return moeda_show();
     };
 };
+
+function dispatchEffects(acao, item) {
+
+    const equipado = Object.keys(gameState.itens).find(el => gameState.itens[el]);
+
+    switch (equipado) {
+        case 'neon_pulse': return efeitoNeonPulse(item);
+    }
+}
 
 const limite_moedas = 60;
 
@@ -216,21 +223,24 @@ const barra_level = level_container.querySelector('#barra_level');
 
 function xpNecessario() { return (gameState.player.nivel + 1) * 100 };
 
-function calculandoXP(origem_xp) {
+function sistemaXP(origem_xp) {
     const valor = balanceamentoXP(origem_xp);
     gameState.player.xp += valor;
+    const xpNecessario = xpNecessario();
 
-    if (gameState.player.xp >= xpNecessario()) {
-        gameState.player.xp -= xpNecessario();
-        gameState.player.nivel++;
+    if (gameState.player.xp >= xpNecessario) {
+        setTimeout(() => {
+            gameState.player.xp -= xpNecessario;
+            gameState.player.nivel++;
 
-        updateUI('level_up');
-        dispatch('moeda', 'level_up');
+            updateUI('levelUP');
+            dispatch('moeda', 'levelUP');
+        }, 3500);
     };
 
     dispatch('save');
 
-    updateUI('barra_level_porcentagem')
+    updateUI('barra_level_porcentagem');
 };
 
 function barraLevelPorcentagem() {
@@ -301,7 +311,7 @@ function balanceamentoMoedas(origem) {
     switch (origem) {
         case 'tarefa': return moedaPorTarefa();
         case 'progresso_completo': return 10;
-        case 'level_up': return 15;
+        case 'levelUP': return 15;
         default: return 0;
     };
 };
@@ -337,10 +347,12 @@ const LOJA_ITENS = [
         nivel: 1,
         comprado: false,
         equipado: false,
-        imagem: '',
+        imagem: 'neon_pulse',
     },
 ];
 
+const loja_btn = document.getElementById('loja_btn');
+const loja_container = document.getElementById('loja_container');
 const loja = document.getElementById('loja');
 const loja_frame = loja.querySelector('#loja_frame');
 const loja_abas_array = loja_frame.querySelectorAll('.loja_aba');
@@ -362,7 +374,7 @@ function renderLoja(id, itens) {
 
         const img = document.createElement('img');
         img.setAttribute('loading', 'lazy');
-        img.setAttribute('src', item.imagem);
+        img.setAttribute('src', `/src/imagens/loja/${item.imagem}.webp`);
 
         const textos_div = document.createElement('div');
         textos_div.classList.add('textos');
@@ -454,9 +466,32 @@ loja.addEventListener('click', (click) => {
     const item = click.target.closest('.comprar_container button');
 
     if (!categoria && !item) return;
-    else if (categoria) updateUI('troca_categoria', categoria.dataset.categoria);
+    else if (categoria) updateUI('categoria', categoria.dataset.categoria);
     else if (item) dispatch('comprar_item', item.closest('.card'));
 });
+
+loja_btn.addEventListener('click', () => {
+    loja_container.classList.toggle('aberto');
+    loja_btn.classList.toggle('aberto');
+});
+
+// #endregion
+
+
+
+
+// #region INVENTARIO & ITENS
+
+function efeitoNeonPulse(el) {
+    const pulse = document.createElement("span");
+    pulse.classList.add("neon-pulse");
+
+    el.appendChild(pulse);
+
+    setTimeout(() => pulse.remove(), 600);
+}
+
+// gameState.itens['neon_pulse'] = true;
 
 // #endregion
 
@@ -580,6 +615,8 @@ lista.addEventListener('change', (click) => {
 
     gameState.tarefas.find(el => el.id == id).feito = true;
 
+    dispatchEffects('check', click.target.parentElement.querySelector('.checkbox'));
+
     tocarSom(sons.check);
 
     completos++;
@@ -588,7 +625,7 @@ lista.addEventListener('change', (click) => {
     dispatch('moeda', 'tarefa');
 
     const posicao_XP = click.target.closest('li').querySelector('.coin');
-    updateUI('spawn_xp', 'tarefa', posicao_XP);
+    updateUI('XP', 'tarefa', posicao_XP);
 
     span_hoje.textContent = gameState.stats.hoje;
 
@@ -597,7 +634,8 @@ lista.addEventListener('change', (click) => {
         dispatch('progresso_barra');
     }, 500);
 
-    dispatch('calculo_xp', 'tarefa')
+    dispatch('XP', 'tarefa')
+
 
     if (gameState.ultimo_acesso != hoje_verificacao) dispatch('ultimo_acesso');
 });
@@ -675,8 +713,8 @@ async function progressoBarra(renderizando) {
                 }, 500)
 
                 if (!gameState.stats.progresso_completo_hoje) {
-                    dispatch('calculo_xp', 'progresso_completo');
-                    updateUI('spawn_xp', 'progresso_completo', barra_progresso, 1000);
+                    dispatch('XP', 'progresso_completo');
+                    updateUI('XP', 'progresso_completo', barra_progresso, 1000);
 
                     dispatch('moeda', 'progresso_completo');
 
@@ -699,12 +737,12 @@ async function progressoBarra(renderizando) {
         else if (porcentagem >= 5 && i == 0) {
             background += cores_progresso[0];
 
-            if (!renderizando) dispatch('calculo_xp', 'progresso');
+            if (!renderizando) dispatch('XP', 'progresso');
         }
         else if (porcentagem >= (i + 1) * 20) {
             background += `, ${cores_progresso[i]}`;
 
-            if (!renderizando && !gameState.stats.progresso_completo_hoje) updateUI('spawn_xp', 'progresso', barra_progresso, 1000);
+            if (!renderizando && !gameState.stats.progresso_completo_hoje) updateUI('XP', 'progresso', barra_progresso, 1000);
         };
     };
 
@@ -830,7 +868,7 @@ async function streakVerificacao() {
             gameState.streak[i - 1] = true;
             play = true;
 
-            dispatch('calculo_xp', 'streak_hoje')
+            dispatch('XP', 'streak_hoje')
 
             dispatch('save')
 
@@ -850,7 +888,7 @@ async function streakVerificacao() {
 
 
         const posicao_XP = streak.querySelector('h2');
-        updateUI('spawn_xp', 'streak_hoje', posicao_XP)
+        updateUI('XP', 'streak_hoje', posicao_XP)
 
         setTimer('timeoutStreak', () => {
             tocarSom(sons.fire_end);

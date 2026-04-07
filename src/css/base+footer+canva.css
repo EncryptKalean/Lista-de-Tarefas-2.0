@@ -48,7 +48,11 @@ body {
   padding-top: 0;
   background: url("../imagens/background_pixelado.webp") no-repeat center /
     cover;
-    position: relative;
+  position: relative;
+}
+
+.center {
+  position: relative;
 }
 
 h1,
