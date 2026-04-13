@@ -1,8 +1,8 @@
 # 🧠 Lista de Tarefas 2.0 — Dopamine Driven (PWA)
 
-Uma lista de tarefas simples, rápida e viciante — projetada para transformar pequenas ações em recompensas imediatas.
+Uma lista de tarefas simples na superfície, mas com um sistema completo de gamificação por trás.
 
-A ideia central do projeto é usar **gatilhos de dopamina** para incentivar consistência, foco e disciplina no dia a dia.
+O objetivo do projeto é transformar tarefas do dia a dia em micro-recompensas imediatas, incentivando consistência e criando um ciclo de progresso contínuo.
 
 ---
 
@@ -14,9 +14,7 @@ A ideia central do projeto é usar **gatilhos de dopamina** para incentivar cons
 
 ## 📱 Instale como App (PWA)
 
-Transforme a experiência em algo ainda mais rápido e imersivo instalando no seu dispositivo.
-
-Esse projeto é um **Progressive Web App (PWA)** — ou seja, funciona como um app real no seu celular.
+Esse projeto é um **Progressive Web App (PWA)** — funciona como um app real no celular.
 
 ### ✨ Benefícios
 
@@ -29,13 +27,15 @@ Esse projeto é um **Progressive Web App (PWA)** — ou seja, funciona como um a
 ### 📥 Como instalar
 
 **Android (Chrome):**
-1. Abra o link do projeto  
-2. Toque em **"Adicionar à tela inicial"**  
-3. Pronto — agora é um app  
+
+1. Abra o link do projeto
+2. Toque em **"Adicionar à tela inicial"**
+3. Pronto — agora é um app
 
 **iPhone (Safari):**
-1. Abra o site  
-2. Toque no botão de compartilhar  
+
+1. Abra o site
+2. Toque no botão de compartilhar
 3. Selecione **"Adicionar à Tela de Início"**
 
 ---
@@ -48,30 +48,50 @@ Esse projeto é um **Progressive Web App (PWA)** — ou seja, funciona como um a
 
 ## 🚀 Sobre o projeto
 
-Diferente de listas tradicionais, esse app não é só sobre organizar tarefas — é sobre **sentir progresso**.
+A maioria das listas de tarefas falha porque foca apenas em organização.
 
-Cada interação foi pensada para gerar feedback positivo:
+Esse projeto segue outro caminho:
 
-- ✔ Sons de recompensa  
-- ✔ Animações visuais  
-- ✔ Barra de progresso dinâmica  
-- ✔ Mensagens motivacionais  
-- ✔ Sistema de streak (sequência)  
+> fazer tarefas = receber recompensas imediatas
 
-Tudo isso para transformar tarefas simples em **micro-vitórias diárias**.
+- ✔ Animações
+- ✔ Feedback sonoro
+- ✔ Barra de progresso
+- ✔ Mensagens motivacionais dinâmicas
+- ✔ Celebrações visuais
+
+O foco não é só produtividade — é engajamento e consistência.
 
 ---
 
 ## ⚡ Funcionalidades
 
-- ✅ Adicionar tarefas rapidamente  
-- 🎯 Marcar tarefas como concluídas  
-- 📊 Barra de progresso dinâmica  
-- 🔥 Sistema de streak (sequência de tarefas)  
-- 🎧 Feedback sonoro para ações  
-- 💾 Persistência com `localStorage`  
-- 📲 Instalável como app (PWA)  
-- 📦 Funciona offline  
+- ✅ Adicionar e concluir tarefas
+- 📊 Barra de progresso dinâmica
+- 🔥 Streak diário e consistência
+- 🧠 Sistema de níveis e progressão
+- 💰 Moedas / XP / pontos
+- 🛒 Loja com itens desbloqueáveis
+- 🎨 Customização de efeitos visuais
+- 🎉 Confetes ao completar metas
+- 🧾 Total de tarefas concluídas
+- 🎧 Feedback sonoro
+- 💾 Persistência com localStorage
+- 📲 Instalável como app (PWA)
+- 📦 Funciona offline
+
+---
+
+## 🏗️ Arquitetura
+
+O projeto foi estruturado pensando em escalabilidade e evolução contínua:
+
+- Command Pattern → ações desacopladas
+- Event Dispatcher → comunicação entre módulos
+- Arquitetura estilo Redux (simplificada) → estado centralizado
+- Merge de estados → mantém compatibilidade entre versões
+
+Isso permite adicionar novas funcionalidades sem quebrar dados antigos do usuário.
 
 ---
 
@@ -81,10 +101,10 @@ Tudo isso para transformar tarefas simples em **micro-vitórias diárias**.
 
 O app utiliza princípios de:
 
-- Recompensa imediata  
-- Feedback visual e auditivo  
-- Progresso contínuo  
-- Gamificação leve  
+- Recompensa imediata
+- Feedback constante
+- Progresso visível
+- Gamificação leve
 
 O objetivo é reduzir fricção e aumentar a sensação de progresso.
 
@@ -92,22 +112,22 @@ O objetivo é reduzir fricção e aumentar a sensação de progresso.
 
 ## 🛠️ Tecnologias
 
-- HTML5  
-- CSS3 (otimizado para performance mobile)  
-- JavaScript (Vanilla)  
-- Service Worker (PWA)  
-- LocalStorage  
+- HTML5
+- CSS3 (otimizado para performance mobile)
+- JavaScript (Vanilla)
+- Service Worker (PWA)
+- LocalStorage
 
 ---
 
 ## 📱 Performance
 
-O projeto foi pensado para rodar bem até em dispositivos mais simples:
+Pensado para rodar bem até em dispositivos simples:
 
-- Uso mínimo de reflows  
-- Animações com `transform` e `opacity`  
-- Renderização otimizada com `DocumentFragment`  
-- Cache inteligente com Service Worker  
+- Uso mínimo de reflows
+- Animações com `transform` e `opacity`
+- Renderização otimizada com `DocumentFragment`
+- Cache inteligente com Service Worker
 
 ---
 
@@ -115,27 +135,19 @@ O projeto foi pensado para rodar bem até em dispositivos mais simples:
 
 ### 🎮 Gamificação
 
-- Sistema de níveis nas mensagens motivacionais  
-- Sistema de nível + recompensas  
-  - Novas cores  
-  - Novos sons  
-  - Novos efeitos visuais  
-- Sistema de desafios  
+- Sistema de conquistas (achievements)
+- Balanceamento de XP e moedas
+- Expansão da loja
 
 ### 🔥 Engajamento
 
-- Streak diário (sequência de dias ativos)  
-- Total de tarefas completadas ao longo do tempo  
+- Sistema de missões/desafios
+- Loop de retenção mais refinado
 
 ### 🎨 Feedback visual
 
-- Confetes ao completar metas  
-- Variação de efeitos visuais conforme progresso  
-
-### 🎧 Feedback sonoro
-
-- Variação dinâmica de sons  
-- Sons evoluindo conforme nível  
+- Novos temas visuais
+- Melhorias de responsividade
 
 ---
 
@@ -145,14 +157,15 @@ A maioria das pessoas não falha por falta de capacidade, mas por falta de consi
 
 Esse projeto tenta resolver isso criando um sistema onde:
 
-> fazer tarefas = receber pequenas recompensas imediatas
+> pequenas ações geram pequenas recompensas
+> pequenas recompensas geram consistência
 
 ---
 
 ## 📌 Status do projeto
 
 🚧 Em desenvolvimento contínuo  
-💡 Foco em UX, performance e gamificação  
+💡 Foco em UX, performance e gamificação
 
 ---
 
