@@ -76,7 +76,9 @@ navigator.serviceWorker.register("sw.js").then(reg => {
 // #region SISTEMAS BASICOS
 
 function carregarInformacoes() {
-    const save = JSON.parse(localStorage.getItem('gameState')) ?? [];
+    let save = JSON.parse(localStorage.getItem('gameState')) ?? [];
+
+    if (Object.keys(save.itens).length === 0) save.itens = [];
 
     const defaultState = {
         player: {
