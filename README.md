@@ -158,6 +158,7 @@ A maioria das pessoas não falha por falta de capacidade, mas por falta de consi
 Esse projeto tenta resolver isso criando um sistema onde:
 
 > pequenas ações geram pequenas recompensas
+
 > pequenas recompensas geram consistência
 
 ---
