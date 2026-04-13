@@ -4,6 +4,7 @@
   background-color: rgba(81, 255, 0, 0.3);
   color: var(--texto_primario);
   height: 40px;
+  aspect-ratio: 1;
   margin-top: 10px;
   padding: 5px;
   border-radius: 5px;
@@ -12,7 +13,21 @@
     opacity 0.3s,
     color 0.3s,
     background-color 0.3s;
-    display: none;
+  justify-items: center;
+}
+
+#loja_btn p {
+  font-size: 1.5rem;
+}
+
+#loja_btn p,
+#loja_btn.aberto SVG {
+  display: none;
+}
+
+#loja_btn SVG,
+#loja_btn.aberto p {
+  display: block;
 }
 
 #loja_btn.aberto {
@@ -29,7 +44,7 @@
 #loja_container {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 45%);
   justify-items: right;
   transition: transform 0.5s ease-out;
   transform: translateX(100%);
@@ -70,6 +85,7 @@
 #moedas_show svg {
   height: 25px;
   color: var(--neon_gold);
+  box-shadow: 0 0 15px var(--neon_gold);
 }
 
 #categorias {
@@ -107,19 +123,20 @@
 #loja_frame {
   margin-top: 5%;
   width: 100%;
-  max-height: 80dvh;
-  overflow-y: auto;
+  height: 100%;
+  max-height: 90dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .loja_aba {
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   transform-origin: top;
-  gap: 10px;
+  gap: 18px;
   width: 100%;
-  margin-bottom: 10px;
   transform: scaleY(0);
   transition: transform 0.3s;
   order: 0;
@@ -132,12 +149,11 @@
 
 .card {
   display: flex;
-  overflow: hidden;
-  padding: 10px 2px;
-  border: 1px solid var(--neon_primario);
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--neon_primario);
   border-radius: 5px;
-  gap: 3%;
   opacity: 0.5;
+  align-items: center;
 }
 
 .liberado {
@@ -148,12 +164,10 @@
   opacity: 0.7;
 }
 
-.card.comprado .preco {
-  display: none;
-}
-
-.card.comprado button::before {
-  content: "equipar";
+.card.equipado {
+  opacity: 1;
+  background-color: color-mix(in srgb, var(--neon_primario) 10%, transparent);
+  border-color: transparent;
 }
 
 .card > div {
@@ -162,18 +176,22 @@
 
 .card img {
   object-fit: cover;
-  width: 50px;
+  height: 60px;
   aspect-ratio: 1;
-  border: 2px solid white;
-  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
 }
 
 .card .textos {
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 10px;
 }
 
 .item_nome {
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .item_nome,
@@ -186,32 +204,30 @@
   color: rgb(146, 146, 146);
 }
 
-.item_tipo {
-  margin: 5% 0;
-}
-
 .liberado .item_nivel {
   display: none;
 }
 
 .comprar_container {
-  width: 100%;
-  max-width: 25%;
   justify-items: center;
   margin-left: auto;
-  margin-right: 10px;
 }
 
 .comprar_container .preco {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-bottom: 5px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.card.comprado .preco {
+  display: none;
 }
 
 .preco svg {
   height: 17px;
   color: var(--neon_gold);
+  box-shadow: 0 0 15px var(--neon_gold);
 }
 
 .comprar_container button {
@@ -223,7 +239,23 @@
 }
 
 .comprar_container button::before {
+  content: "bloqueado";
+}
+
+.liberado button::before {
   content: "comprar";
+}
+
+.card.comprado button::before {
+  content: "equipar";
+}
+
+.card.equipado button::before {
+  content: "equipado";
+}
+
+.card.equipado button {
+  background-color: color-mix(in srgb, var(--neon_primario) 50%, transparent);
 }
 
 /* EFEITOS --------------------------------------------------------- */

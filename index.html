@@ -168,8 +168,9 @@
             </ul>
           </div>
 
-          <button id="loja_btn">
+          <button class="" id="loja_btn">
             <svg><use href="#icon_loja" /></svg>
+            <P>X</P>
           </button>
 
           <button id="delete_all" class="escondido">
@@ -213,49 +214,12 @@
           </div>
 
           <div id="loja_frame">
-            <div class="loja_aba aberto" id="efeitos">
-              <!-- <div class="card" nivel="">
-                <img class="img" src="" alt="" loading="lazy" />
+            <div class="loja_aba aberto" id="efeitos"></div>
 
-                <div class="textos">
-                  <h3 class="item_nome">Neon Pulse</h3>
-                  <p class="item_tipo">Efeito de check</p>
-                  <p class="item_nivel">Nivel 10</p>
-                </div>
-
-                <div class="comprar_container">
-                  <div class="preco">
-                    <svg><use href="#icon_coin" /></svg>
-                    <span>150</span>
-                  </div>
-                  <button>comprar</button>
-                </div>
-              </div> -->
-              <!-- card -->
-            </div>
-
-            <div class="loja_aba" id="temas">
-              <!-- <div class="card" nivel="">
-                <img class="img" src="" alt="" loading="lazy" />
-
-                <div class="textos">
-                  <h3 class="item_nome">Neon Pulse</h3>
-                  <p class="item_tipo">Efeito de check</p>
-                  <p class="item_nivel">Nivel 10</p>
-                </div>
-
-                <div class="comprar_container">
-                  <div class="preco">
-                    <svg><use href="#icon_coin" /></svg>
-                    <span>150</span>
-                  </div>
-                  <button>comprar</button>
-                </div>
-              </div> -->
-              <!-- card -->
-            </div>
+            <div class="loja_aba" id="temas"></div>
 
             <div class="loja_aba" id="sons">
+
               <!-- <div class="card" nivel="">
                 <img class="img" src="" alt="" loading="lazy" />
 
@@ -270,10 +234,11 @@
                     <svg><use href="#icon_coin" /></svg>
                     <span>150</span>
                   </div>
-                  <button>comprar</button>
+                  <button></button>
                 </div>
               </div> -->
               <!-- card -->
+
             </div>
           </div>
         </div>
@@ -284,7 +249,7 @@
     <!-- Isso aqui é uma tela secreta que eu uso para apagar os localStorages no mobile -->
     <section id="tela_secreta" class="">
       <p>OBS: Não terá tela de confirmação ao apertar o botão</p>
-      <button onclick="reset()">RESET</button>
+      <button onclick="hardReset()">RESET</button>
       <button id="cancel" onclick="telaSecreta()">X</button>
     </section>
 
