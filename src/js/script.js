@@ -603,7 +603,7 @@ function renderLoja(id, itens) {
 
         const img = document.createElement('img');
         img.setAttribute('loading', 'lazy');
-        img.setAttribute('src', `/src/imagens/loja/${item.imagem}.webp`);
+        img.setAttribute('src', `src/imagens/loja/${item.imagem}.webp`);
 
         const textos_div = document.createElement('div');
         textos_div.classList.add('textos');
