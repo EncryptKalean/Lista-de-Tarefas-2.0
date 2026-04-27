@@ -1,4 +1,4 @@
-const CACHE_NAME = "lista-tarefas-v1.2.6";
+const CACHE_NAME = "lista-tarefas-v1.2.7";
 
 // arquivos essenciais (app shell)
 const STATIC_ASSETS = [
@@ -15,9 +15,9 @@ const STATIC_ASSETS = [
   "./src/js/confetti.js",
   "./manifest.json",
   // 🔊 sons essenciais
-  "./src/audio/create.ogg",
-  "./src/audio/check.ogg",
-  "./src/audio/grand_finale_2.ogg"
+  "./src/audios/create.ogg",
+  "./src/audios/check.ogg",
+  "./src/audios/grand_finale_2.ogg"
 ];
 
 // INSTALL → garante offline base
@@ -40,9 +40,24 @@ self.addEventListener("activate", (event) => {
 
 // FETCH (inteligente)
 self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // 🚫 ignora coisas que não são http/https
+  if (!url.protocol.startsWith("http")) return;
+
+  // 🚫 só aceita GET
+  if (event.request.method !== "GET") return;
+
+  // 🔒 só cacheia coisas do seu próprio site
+  if (url.origin !== self.location.origin) return;
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
+        if (!response || response.status !== 200) {
+          return response;
+        }
+
         const clone = response.clone();
 
         caches.open(CACHE_NAME).then(cache => {
@@ -56,5 +71,5 @@ self.addEventListener("fetch", (event) => {
 });
 
 /*
-  OBS: Eu não configurei essa parte do SW.js sozinho, usei bastante IA e pesquisas na internet
+  OBS: Eu não configurei essa parte do SW.js sozinho, usei IA e pesquisas na internet
 */

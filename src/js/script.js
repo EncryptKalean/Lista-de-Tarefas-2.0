@@ -51,7 +51,7 @@ document.addEventListener("click", unlockAudio, { once: true });
 
 
 
-navigator.serviceWorker.register("sw.js").then(reg => {
+navigator.serviceWorker.register("./sw.js").then(reg => {
     // força verificar update
     setTimeout(() => {
         reg.update();
@@ -78,7 +78,7 @@ navigator.serviceWorker.register("sw.js").then(reg => {
 function carregarInformacoes() {
     let save = JSON.parse(localStorage.getItem('gameState')) ?? [];
 
-    if (Object.keys(save.itens).length === 0) save.itens = [];
+    if (!save && Object.keys(save.itens).length === 0) save.itens = [];
 
     const defaultState = {
         player: {
@@ -343,9 +343,6 @@ const barra_level = level_container.querySelector('#barra_level');
 function xpNecessario() { return (gameState.player.nivel + 1) * 100 };
 
 function sistemaXP(payload) {
-    // console.log('origem XP:');
-    // console.log(payload);
-
     const origem_xp = payload.tipo;
 
     const valor = balanceamentoXP(origem_xp);
@@ -353,7 +350,7 @@ function sistemaXP(payload) {
     const xp_necessario = xpNecessario();
 
     if (gameState.player.xp >= xp_necessario) {
-        setTimeout(() => {
+        setTimer('levelUP', () => {
             gameState.player.xp -= xp_necessario;
             gameState.player.nivel++;
 
