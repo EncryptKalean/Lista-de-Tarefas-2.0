@@ -124,8 +124,12 @@ const dispatch = {
         gameState.moedas_ganhas_hoje = 0;
     },
     status: (payload) => {
-        if (payload.hoje) gameState.stats.hoje++;
-        if (payload.total) gameState.stats.total++;
+        if (payload.hoje === 'menos') gameState.stats.hoje--;
+        else if (payload.hoje) gameState.stats.hoje++;
+
+        if (payload.total === 'menos') gameState.stats.total--;
+        else if (payload.total) gameState.stats.total++;
+
         if (payload.dias) gameState.stats.dias++;
     },
     ultimoAcesso: () => {
@@ -140,7 +144,9 @@ const dispatch = {
     reset: () => reset(),
     streak: () => streakVerificacao(),
     criarTarefa: (payload) => criandoTarefa(payload),
-    comprarItem: (payload) => comprarItem(payload)
+    comprarItem: (payload) => comprarItem(payload),
+    deleteUnicoTela: (payload) => janelaDeleteUnico(payload),
+    deleteTarefa: (payload) => apagarTarefa(payload),
 };
 
 function updateUI(acao, item, valor, delay) {
@@ -148,7 +154,7 @@ function updateUI(acao, item, valor, delay) {
 
     switch (acao) {
         case 'render': return render(item, valor);
-        case 'XP': return spawnXP(item, valor, delay);
+        case 'spawnXP': return spawnXP(item, valor, delay);
         case 'barra_level_porcentagem': return barraLevelPorcentagem();
         case 'mensagem_motivacional': return mensagemMotivacional();
         case 'levelUP':
@@ -346,7 +352,10 @@ function sistemaXP(payload) {
     const origem_xp = payload.tipo;
 
     const valor = balanceamentoXP(origem_xp);
-    gameState.player.xp += valor;
+
+    if (payload.add == false) gameState.player.xp -= valor;
+    else gameState.player.xp += valor;
+
     const xp_necessario = xpNecessario();
 
     if (gameState.player.xp >= xp_necessario) {
@@ -357,7 +366,14 @@ function sistemaXP(payload) {
             updateUI('levelUP');
             dispatch.moedas({ tipo: 'levelUP' });
         }, 3500);
-    };
+    }
+    else if (gameState.player.xp < 0 && payload.add == false) {
+        setTimer('levelDOWN', () => {
+            gameState.player.xp = xp_necessario - valor;
+            gameState.player.nivel--;
+            dispatch.moedas({ tipo: 'levelUP', add: payload.add });
+        }, 3500);
+    }
 
     dispatch.save();
 
@@ -447,12 +463,18 @@ function moedasSistema(payload = {}) {
         gameState.moedas -= valor;
         dispatch.save();
     }
-    else if (gameState.moedas_ganhas_hoje < limite_moedas) {
-        gameState.moedas += balanceamentoMoedas(tipo);
-        gameState.moedas_ganhas_hoje++;
+    else {
+        if (!payload.add) {
+            gameState.moedas -= balanceamentoMoedas(tipo);
+            gameState.moedas_ganhas_hoje -= balanceamentoMoedas(tipo);
+        }
+        else if (gameState.moedas_ganhas_hoje < limite_moedas) {
+            gameState.moedas += balanceamentoMoedas(tipo);
+            gameState.moedas_ganhas_hoje += balanceamentoMoedas(tipo);
+        };
+    };
 
-        updateUI('moeda');
-    }
+    updateUI('moeda');
 };
 
 // #endregion
@@ -772,6 +794,8 @@ const campo_digitacao = input_container.querySelector('input');
 const adicionar_btn = input_container.querySelector('button');
 const apagar_tudo_btn = document.getElementById('delete_all');
 const apagar_tudo_alerta = document.getElementById('delete_alerta');
+const apagar_tarefa_unica = document.getElementById('delete-tarefa-unica');
+const apagar_tarefa_btn = apagar_tarefa_unica.querySelector('#confirmar');
 
 adicionar_btn.addEventListener('click', () => { add() });
 campo_digitacao.addEventListener('keyup', (event) => { if (event.key === 'Enter') add(); });
@@ -872,26 +896,34 @@ function render(tarefa, novo) {
 };
 
 lista.addEventListener('change', (click) => {
-    if (click.target.type !== 'checkbox') return;
+    const checkbox = click.target;
+
+    if (checkbox.type !== 'checkbox') return;
     if (footer.classList.contains('nada')) footer.classList.remove('nada');
+
+    const checked = checkbox.checked;
 
     const id = click.target.closest('li').id;
 
-    gameState.tarefas.find(el => el.id == id).feito = true;
+    gameState.tarefas.find(el => el.id == id).feito = checked;
 
     dispatchEffects('visual', click.target.parentElement.querySelector('.checkbox'));
-
     dispatchEffects('audio', 'check');
 
-    completos++;
-    dispatch.status({
-        hoje: true,
-        total: true
-    });
-    dispatch.moedas({ tipo: 'tarefa' })
+    (checked ? completos++ : completos--);
 
-    const posicao_XP = click.target.closest('li').querySelector('.coin');
-    updateUI('XP', 'tarefa', posicao_XP);
+    dispatch.status({
+        hoje: (checked ? checked : 'menos'),
+        total: (checked ? checked : 'menos')
+    });
+
+    dispatch.moedas({ tipo: 'tarefa', add: checked });
+
+    if (checked) {
+        const posicao_XP = click.target.closest('li').querySelector('.coin');
+
+        updateUI('spawnXP', 'tarefa', posicao_XP);
+    };
 
     span_hoje.textContent = gameState.stats.hoje;
 
@@ -900,8 +932,7 @@ lista.addEventListener('change', (click) => {
         dispatch.progressoBarra();
     }, 500);
 
-    dispatch.xp({ tipo: 'tarefa' });
-
+    dispatch.xp({ tipo: 'tarefa', add: checked });
 
     if (gameState.ultimo_acesso != hoje_verificacao) dispatch.ultimoAcesso();
 });
@@ -947,6 +978,53 @@ function reset() {
     dispatch.save();
 }
 
+let pressTimer;
+
+document.body.addEventListener('touchstart', function (click) {
+    const target = click.target.closest('li');
+
+    if (!target) return;
+
+    pressTimer = setTimeout(() => { dispatch.deleteUnicoTela(target); }, 1000);
+});
+
+document.body.addEventListener('touchend', function (e) {
+    // cancela se o usuário soltar antes do tempo
+    clearTimeout(pressTimer);
+});
+
+document.body.addEventListener('touchmove', function (e) {
+    // cancela se o dedo se mover (arrastar)
+    clearTimeout(pressTimer);
+});
+
+
+apagar_tarefa_unica.querySelector('#cancelar').addEventListener('click', () => dispatch.deleteUnicoTela());
+
+apagar_tarefa_btn.addEventListener('click', () => {
+    dispatch.deleteTarefa(apagar_tarefa_btn.dataset.tarefaid);
+});
+
+function janelaDeleteUnico(payload) {
+    apagar_tarefa_unica.classList.toggle('aberto');
+
+    if (!apagar_tarefa_unica.classList.contains('aberto')) return;
+
+    apagar_tarefa_unica.querySelector('p').textContent = payload.querySelector('span').textContent;
+
+    if (payload.id) apagar_tarefa_btn.setAttribute('data-tarefaid', payload.id);
+};
+
+function apagarTarefa(id) {
+    const indexTarefa = gameState.tarefas.find(el => el.id === id);
+    gameState.tarefas.splice(indexTarefa, 1);
+
+    document.getElementById(id).remove();
+
+    dispatch.deleteUnicoTela();
+    dispatch.save();
+};
+
 // #endregion
 
 
@@ -980,7 +1058,7 @@ async function progressoBarra(renderizando) {
 
                 if (!gameState.stats.progresso_completo_hoje) {
                     dispatch.xp({ tipo: 'progresso_completo' });
-                    updateUI('XP', 'progresso_completo', barra_progresso, 1000);
+                    updateUI('spawnXP', 'progresso_completo', barra_progresso, 1000);
 
                     dispatch.moedas({ tipo: 'progresso_completo' });
 
@@ -1008,7 +1086,7 @@ async function progressoBarra(renderizando) {
         else if (porcentagem >= (i + 1) * 20) {
             background += `, ${cores_progresso[i]}`;
 
-            if (!renderizando && !gameState.stats.progresso_completo_hoje) updateUI('XP', 'progresso', barra_progresso, 1000);
+            if (!renderizando && !gameState.stats.progresso_completo_hoje) updateUI('spawnXP', 'progresso', barra_progresso, 1000);
         };
     };
 
@@ -1154,7 +1232,7 @@ async function streakVerificacao() {
 
 
         const posicao_XP = streak.querySelector('h2');
-        updateUI('XP', 'streak_hoje', posicao_XP)
+        updateUI('spawnXP', 'streak_hoje', posicao_XP)
 
         setTimer('timeoutStreak', () => {
             dispatchEffects('audio', 'streak_end');

@@ -36,13 +36,19 @@
     display: none;
   }
 
-  #input_container input {
+  #input_container input,
+  #input_container input::placeholder {
     font-size: 0.8rem;
   }
 
   #input_container button {
     padding: 5px 10px;
     font-size: 1rem;
+  }
+
+  #delete_alerta h2,
+  #delete-tarefa-unica h2 {
+    font-size: 1.3rem;
   }
 }
 

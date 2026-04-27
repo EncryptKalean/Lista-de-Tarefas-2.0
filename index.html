@@ -170,12 +170,29 @@
 
           <button class="" id="loja_btn">
             <svg><use href="#icon_loja" /></svg>
-            <P>X</P>
+            <p>X</p>
           </button>
 
           <button id="delete_all" class="escondido">
             <svg><use href="#icon_lixo" /></svg>
           </button>
+
+          <div class="" id="delete-tarefa-unica">
+            <svg><use href="#icon_lixo" /></svg>
+            <h2>Tem certeza que deseja apagar essa tarefa?</h2>
+
+            <p id="tarefa-preview">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Magnam
+              pariatur soluta ex reprehenderit molestiae repellat officia vero,
+              obcaecati sed quos praesentium ea explicabo earum! Ut aut
+              doloremque iure iste? Earum.
+            </p>
+
+            <div>
+              <button id="cancelar">Cancelar</button>
+              <button id="confirmar">Confirmar</button>
+            </div>
+          </div>
 
           <div class="" id="delete_alerta">
             <svg><use href="#icon_lixo" /></svg>
@@ -219,7 +236,6 @@
             <div class="loja_aba" id="temas"></div>
 
             <div class="loja_aba" id="sons">
-
               <!-- <div class="card" nivel="">
                 <img class="img" src="" alt="" loading="lazy" />
 
@@ -238,7 +254,6 @@
                 </div>
               </div> -->
               <!-- card -->
-
             </div>
           </div>
         </div>
@@ -400,10 +415,20 @@
         <path d="M6 18a4 4 0 0 1-2-7.464" />
         <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" />
       </symbol>
-      <symbol id="icon_loja" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="8" cy="21" r="1"/>
-        <circle cx="19" cy="21" r="1"/>
-        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+      <symbol
+        id="icon_loja"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="8" cy="21" r="1" />
+        <circle cx="19" cy="21" r="1" />
+        <path
+          d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+        />
       </symbol>
     </svg>
 
