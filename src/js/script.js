@@ -68,7 +68,7 @@ navigator.serviceWorker.register("./sw.js").then(reg => {
             }
         });
     });
-}, { once: true });
+});
 
 
 
@@ -76,9 +76,12 @@ navigator.serviceWorker.register("./sw.js").then(reg => {
 // #region SISTEMAS BASICOS
 
 function carregarInformacoes() {
-    let save = JSON.parse(localStorage.getItem('gameState')) ?? [];
+    let save = JSON.parse(localStorage.getItem('gameState')) || {};
 
-    if (!save && Object.keys(save.itens).length === 0) save.itens = [];
+    save.itens ??= [];
+    save.tarefas ??= [];
+    save.player ??= {};
+    save.stats ??= {};
 
     const defaultState = {
         player: {
@@ -110,7 +113,7 @@ function carregarInformacoes() {
 
         stats: {
             ...defaultState.stats,
-            ...save.sats
+            ...save.stats
         },
     };
 }
@@ -122,6 +125,8 @@ const dispatch = {
     resetHoje: () => {
         gameState.stats.hoje = 0;
         gameState.moedas_ganhas_hoje = 0;
+        gameState.stats.progresso_completo_hoje = false;
+
     },
     status: (payload) => {
         if (payload.hoje === 'menos') gameState.stats.hoje--;
@@ -346,38 +351,63 @@ const level_atual_texto = level_container.querySelector('span');
 const level_proximo_texto = level_container.querySelector('#level_proximo');
 const barra_level = level_container.querySelector('#barra_level');
 
-function xpNecessario() { return (gameState.player.nivel + 1) * 100 };
+function xpNecessario(adicao) {
+    let nvl = gameState.player.nivel + (adicao === false ? -1 : 1);
+    if (nvl <= 0) nvl = 1;
+    const xpMax = nvl * 100;
+    return xpMax;
+};
 
 function sistemaXP(payload) {
+    // console.log('payload')
+    // console.log(payload)
+
+    // console.log('xp')
+    // console.log(gameState.player.xp)
+
     const origem_xp = payload.tipo;
 
     const valor = balanceamentoXP(origem_xp);
 
-    if (payload.add == false) gameState.player.xp -= valor;
+    if (payload.add === false) gameState.player.xp -= valor;
     else gameState.player.xp += valor;
 
-    const xp_necessario = xpNecessario();
+    const xp_necessario = xpNecessario(payload.add);
+
+    // console.log('xp_necessario:');
+    // console.log(xp_necessario);
 
     if (gameState.player.xp >= xp_necessario) {
         setTimer('levelUP', () => {
+            console.log("SUBIU")
             gameState.player.xp -= xp_necessario;
             gameState.player.nivel++;
 
             updateUI('levelUP');
             dispatch.moedas({ tipo: 'levelUP' });
+
+            updateUI('barra_level_porcentagem');
         }, 3500);
     }
-    else if (gameState.player.xp < 0 && payload.add == false) {
+    else if (gameState.player.xp < 0 && payload.add === false) {
         setTimer('levelDOWN', () => {
+            console.log('DESCEU')
             gameState.player.xp = xp_necessario - valor;
             gameState.player.nivel--;
+
+            updateUI('levelUP');
             dispatch.moedas({ tipo: 'levelUP', add: payload.add });
-        }, 3500);
-    }
+
+            // console.log('xp')
+            // console.log(gameState.player.xp)
+
+            updateUI('barra_level_porcentagem');
+        }, 1000);
+    };
+
 
     dispatch.save();
 
-    updateUI('barra_level_porcentagem');
 };
 
 function barraLevelPorcentagem() {
@@ -475,6 +505,7 @@ function moedasSistema(payload = {}) {
     };
 
     updateUI('moeda');
+    dispatch.save();
 };
 
 // #endregion
@@ -611,10 +642,13 @@ function renderLoja(id, itens) {
         const card = document.createElement('div');
         card.classList.add('card');
         if (gameState.player.nivel >= item.nivel) card.classList.add('liberado');
-        if (gameState.itens.find(el => el.id === item.id)) {
+
+        const itemSalvo = gameState.itens.find(el => el.id === item.id);
+
+        if (itemSalvo) {
             card.classList.add('comprado');
-            if (gameState.itens.find(el => el.equipado)) card.classList.add('equipado');
-        };
+            if (itemSalvo.equipado) card.classList.add('equipado');
+        }
         card.setAttribute('nivel', item.nivel);
         card.setAttribute('id', item.id);
         card.setAttribute('data-ativacao', item.ativacao);
@@ -830,7 +864,7 @@ function criandoTarefa(tarefa) {
     dispatchEffects('audio', 'criar');
     total++;
 
-    dispatch.progressoBarra(true);
+    dispatch.progressoBarra({ renderizando: true });
     dispatch.save();
 };
 
@@ -848,7 +882,7 @@ function render(tarefa, novo) {
 
             if (feitos_verificacao.length) {
                 setTimer('timeoutRender', () => {
-                    progressoBarra(true);
+                    dispatch.progressoBarra({ renderizando: true });
                 }, 1000);
             };
         });
@@ -929,7 +963,7 @@ lista.addEventListener('change', (click) => {
 
     setTimer('save', () => {
         dispatch.save();
-        dispatch.progressoBarra();
+        dispatch.progressoBarra({ add: checked });
     }, 500);
 
     dispatch.xp({ tipo: 'tarefa', add: checked });
@@ -1016,10 +1050,20 @@ function janelaDeleteUnico(payload) {
 };
 
 function apagarTarefa(id) {
-    const indexTarefa = gameState.tarefas.find(el => el.id === id);
+    const indexTarefa = gameState.tarefas.findIndex(el => el.id === id);
+
+    if (indexTarefa === -1) return;
+
+    const tarefa = gameState.tarefas[indexTarefa];
+
+    if (tarefa.feito) completos--;
+    total--;
+
     gameState.tarefas.splice(indexTarefa, 1);
 
-    document.getElementById(id).remove();
+    document.getElementById(id)?.remove();
+
+    dispatch.progressoBarra({ renderizando: true });
 
     dispatch.deleteUnicoTela();
     dispatch.save();
@@ -1037,24 +1081,34 @@ const barra_desprogresso = barra_progresso.querySelector('#barra_desprogresso');
 
 const cores_progresso = ["#ff3b3b", "#ff7a00", "#ffe600", "#00ff9f", "#00e0ff"]
 
-async function progressoBarra(renderizando) {
+async function progressoBarra(payload) {
+
+    const add = verificacao('add');
+    const renderizando = verificacao('renderizando');
+
+    function verificacao(argumento) {
+        let val;
+
+        if (payload && argumento in payload) val = payload[argumento];
+        else val = false;
+
+        return val
+    };
 
     porcentagem = (total > 0 ? (completos / total) * 100 : 0);
 
     let background = ``;
 
-    barra_desprogresso.style.transform = `scaleX(${(100 - porcentagem) / 100})`;
+    barra_desprogresso.style.setProperty('--desprogresso', (100 - porcentagem) / 100);
 
     for (let i = 0; i < cores_progresso.length; i++) {
         if (porcentagem > 95 && i == cores_progresso.length - 1) {
-            if (!renderizando) {
+            if (!renderizando && add) {
                 boom();
                 setTimeout(boom, 300);
                 setTimeout(boom, 600);
 
-                setTimeout(() => {
-                    dispatchEffects('audio', 'progresso_completo')
-                }, 500)
+                setTimeout(() => { dispatchEffects('audio', 'progresso_completo') }, 500);
 
                 if (!gameState.stats.progresso_completo_hoje) {
                     dispatch.xp({ tipo: 'progresso_completo' });
@@ -1081,18 +1135,18 @@ async function progressoBarra(renderizando) {
         else if (porcentagem >= 5 && i == 0) {
             background += cores_progresso[0];
 
-            if (!renderizando) dispatch.xp({ tipo: 'progresso' });
+            if (!renderizando && add) dispatch.xp({ tipo: 'progresso' });
         }
         else if (porcentagem >= (i + 1) * 20) {
             background += `, ${cores_progresso[i]}`;
 
-            if (!renderizando && !gameState.stats.progresso_completo_hoje) updateUI('spawnXP', 'progresso', barra_progresso, 1000);
+            if (!renderizando && !gameState.stats.progresso_completo_hoje && add) updateUI('spawnXP', 'progresso', barra_progresso, 1000);
         };
     };
 
-    barra_progresso.style.background = `linear-gradient(90deg, ${background})`;
+    document.documentElement.style.setProperty('--barra-progresso', background);
 
-    if (!renderizando) {
+    if (!renderizando && add) {
         barra_progresso.classList.add('ativo');
 
         dispatchEffects('audio', 'progresso', 0.4);

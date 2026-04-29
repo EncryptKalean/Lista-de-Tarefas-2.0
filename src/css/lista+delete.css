@@ -99,9 +99,9 @@ li span,
   transition: opacity 1s;
 }
 
-li input:checked {
+/* li input:checked {
   display: none;
-}
+} */
 
 li input:checked ~ .checkbox {
   color: var(--neon_gold);

@@ -10,6 +10,7 @@
   --neon_secundario: #00cfff;
   --neon_terciario: #00ff9c;
   --neon_gold: #ffe600;
+  --barra-progresso: var(--neon_primario);
 }
 
 * {
