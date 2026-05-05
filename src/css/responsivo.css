@@ -2,13 +2,65 @@
   body {
     border: 2px solid green;
   }
+} */
+
+:root {
+  --borda-animada: #00ffff 10%, #a855f7 35%, #ff00ff 60%, #00ffff 100%;
+  --animacao: 5s linear infinite;
+  --grossura: 2px;
 }
 
-@media (width < 56.25rem) {
-  body {
+@media (width > 50rem) {
+  /* body {
     border: 2px solid blue;
+  } */
+
+  #tarefas_container {
+    background: linear-gradient(45deg, rgba(35, 10, 60, 1), rgba(10, 5, 20, 1));
+    border: none !important;
+    box-shadow: none !important;
   }
-} */
+
+  li:last-of-type {
+    border-top: none !important;
+  }
+
+  @property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .borda-animada {
+    position: relative;
+    border-radius: 5px;
+  }
+
+  .borda-animada::after,
+  .borda-animada::before {
+    content: "";
+    position: absolute;
+    inset: calc(0px - var(--grossura));
+    border-radius: inherit;
+    background: conic-gradient(from var(--angle), var(--borda-animada));
+    animation: rotacao var(--animacao);
+    z-index: -1;
+  }
+
+  .borda-animada::before {
+    filter: blur(10px);
+  }
+
+  @keyframes rotacao {
+    from {
+      --angle: 0deg;
+    }
+
+    to {
+      --angle: 360deg;
+    }
+  }
+}
 
 @media (width < 37.5rem) {
   /* body {
@@ -49,6 +101,53 @@
   #delete_alerta h2,
   #delete-tarefa-unica h2 {
     font-size: 1.3rem;
+  }
+}
+
+@media (width > 25rem) and (width < 50rem) {
+  .borda-animada {
+    overflow: hidden;
+    padding: var(--grossura);
+    border-radius: 10px;
+  }
+
+  #tarefas_container {
+    position: relative;
+    border-radius: inherit;
+    overflow: visible;
+    background-color: rgba(35, 10, 60);
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  #tarefas_container::before {
+    content: "";
+    position: absolute;
+    inset: -57%;
+    background: conic-gradient(var(--borda-animada));
+    animation: girar var(--animacao);
+    will-change: transform;
+    transform-origin: center;
+    z-index: -1;
+  }
+
+  #tarefas_container ul {
+    overflow: scroll;
+  }
+
+  li {
+    border-right: none;
+    border-left: none;
+  }
+
+  li:last-of-type {
+    border-top: none;
+  }
+
+  @keyframes girar {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 

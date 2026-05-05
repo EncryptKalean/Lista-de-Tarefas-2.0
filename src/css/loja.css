@@ -56,8 +56,7 @@
 
 #loja {
   position: relative;
-  width: 80%;
-  max-width: 500px;
+  width: min(80%, 500px);
   height: 100%;
   background: linear-gradient(45deg, rgba(35, 10, 60, 0.9), rgba(10, 5, 20, 1));
   border-left: 2px solid color-mix(in srgb, var(--neon_primario) 60%, black);
@@ -227,7 +226,7 @@
 .preco svg {
   height: 17px;
   color: var(--neon_gold);
-  box-shadow: 0 0 15px var(--neon_gold);
+  box-shadow: 0 0 10px var(--neon_gold);
 }
 
 .comprar_container button {
