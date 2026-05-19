@@ -91,6 +91,7 @@ li > input {
   border: 2px solid var(--neon_gold);
   border-radius: 5px;
   position: relative;
+  flex-shrink: 0;
 }
 
 li span,
